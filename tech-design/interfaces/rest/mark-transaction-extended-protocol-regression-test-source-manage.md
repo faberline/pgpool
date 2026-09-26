@@ -37,7 +37,7 @@ The marker envelope covers the full integration test because its local-Postgres 
 ```yaml
 coverage_kind: semantic
 changes:
-  - path: apps/pgpool/tests/transaction_extended_protocol.rs
+  - path: tests/transaction_extended_protocol.rs
     action: modify
     section: logic
     impl_mode: hand-written

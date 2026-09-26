@@ -1,4 +1,4 @@
-// SPEC-MANAGED: apps/pgpool/tech-design/logic/p0-dense-buffer-readiness-reactor.md#logic
+// SPEC-MANAGED: tech-design/logic/p0-dense-buffer-readiness-reactor.md#logic
 // <HANDWRITE gap="missing-generator:logic:pgpool-readiness-reactor" tracker="#1753" reason="The transaction reactor owns a socket-readiness state machine not yet expressible by the service generator.">
 //! Socket-independent ownership state for transaction pooling.
 //!

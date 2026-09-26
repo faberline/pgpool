@@ -47,17 +47,17 @@ This is internal behavior only. It retains the established downstream PostgreSQL
 ```yaml
 coverage_kind: semantic
 changes:
-  - path: apps/pgpool/Cargo.toml
+  - path: Cargo.toml
     action: modify
     section: pgpool-readiness-gated-idle-liveness-contract
     impl_mode: hand-written
     reason: Declare the direct socket facade used in the Tokio-owned readiness closure.
-  - path: apps/pgpool/src/pool/backend_pool.rs
+  - path: src/pool/backend_pool.rs
     action: modify
     section: pgpool-readiness-gated-idle-liveness-contract
     impl_mode: hand-written
     reason: Implement exact try_io/MSG_PEEK classifications without changing pool ownership or error paths.
-  - path: apps/pgpool/tests/pool.rs
+  - path: tests/pool.rs
     action: modify
     section: pgpool-readiness-gated-idle-liveness-contract
     impl_mode: hand-written

@@ -53,15 +53,15 @@ A socket error or zero-byte successful vectored write ends the relay leg exactly
 
 ```yaml
 changes:
-  - path: apps/pgpool/src/proxy/relay.rs
+  - path: src/proxy/relay.rs
     action: modify
     section: pgpool-vectored-buffered-relay
     impl_mode: hand-written
-  - path: apps/pgpool/src/pool/transaction.rs
+  - path: src/pool/transaction.rs
     action: modify
     section: pgpool-vectored-buffered-relay
     impl_mode: hand-written
-  - path: apps/pgpool/tests/pool_modes.rs
+  - path: tests/pool_modes.rs
     action: modify
     section: pgpool-vectored-buffered-relay
     impl_mode: hand-written
@@ -78,7 +78,7 @@ requirements:
     text: "The immutable PgBouncer comparison retains all 64 clients and no pgbench client errors; meter sampling is diagnostic only."
     kind: e2e
     risk: high
-    verify: apps/pgpool/benchmarks/pgbouncer-transaction-pooling/run.sh
+    verify: benchmarks/pgbouncer-transaction-pooling/run.sh
   transaction_isolation:
     id: R3
     text: "Transaction lease boundaries, pipelined frontend safety, reset isolation, and the backend capacity cap remain unchanged."
@@ -95,5 +95,5 @@ requirements:
 flowchart TD
     r1[R1 vectored relay] --> cargo_test_p_pgpool_lib_proxy_relay_tests[cargo test -p pgpool --lib proxy::relay::tests]
     r3[R3 transaction isolation] --> cargo_test_p_pgpool_test_pool_test_pool_modes[cargo test -p pgpool --test pool --test pool_modes]
-    r4[R4 release comparison] --> apps_pgpool_benchmarks_pgbouncer_transaction_pooling_run_sh[apps/pgpool/benchmarks/pgbouncer-transaction-pooling/run.sh]
+    r4[R4 release comparison] --> apps_pgpool_benchmarks_pgbouncer_transaction_pooling_run_sh[benchmarks/pgbouncer-transaction-pooling/run.sh]
 ```

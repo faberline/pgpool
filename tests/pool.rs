@@ -1,4 +1,4 @@
-// SPEC-MANAGED: apps/pgpool/tech-design/logic/backend-pool-connection-reuse-and-transaction-session-pool-modes.md#unit-test
+// SPEC-MANAGED: tech-design/logic/backend-pool-connection-reuse-and-transaction-session-pool-modes.md#unit-test
 // <HANDWRITE gap="missing-generator:logic:pgpool-backend-pool" tracker="#1289" reason="Backend pool needs generator primitives that do not exist yet.">
 //! Offline (no live Postgres) coverage for `BackendPool`/`BackendLease` and
 //! transaction-mode's lease boundaries, one test function per TD Unit Test

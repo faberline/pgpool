@@ -1,6 +1,6 @@
 ---
 id: apps-pgpool-admin-plane
-summary: Served admin HTTP plane for pgpool - a hand-rolled axum router bound on `RuntimePlan.admin_bind` via `server_http::serve_h2c_with_options`, exposing `/healthz`, `/readyz`, `/metrics` (Prometheus), `/openapi.json`, `/docs`, `GET /pools`, `GET /pools/{pool}/stats`, and `POST /drain`. A single shared `server_lifecycle::DrainController` (constructed once in `serve()` and cloned into both the TCP frontend's `TcpServerConfig.drain` and the admin plane's readiness/drain handlers) makes `/readyz` and the data-plane accept loop react identically to SIGTERM/SIGINT and to `POST /drain`, so in-flight sessions/transactions finish before the process exits. `/openapi.json` and `/pools`/`/pools/{pool}/stats` responses are built directly from the existing `apps/pgpool/src/spec.rs` JSON value and the WI #1289 `pool::BackendPool::stats()`/`PoolStats` accounting so the served contract and the offline `pgpool spec` inventory share one source of truth (R4/AC3) instead of round-tripping through a separately-typed OpenAPI document.
+summary: Served admin HTTP plane for pgpool - a hand-rolled axum router bound on `RuntimePlan.admin_bind` via `server_http::serve_h2c_with_options`, exposing `/healthz`, `/readyz`, `/metrics` (Prometheus), `/openapi.json`, `/docs`, `GET /pools`, `GET /pools/{pool}/stats`, and `POST /drain`. A single shared `server_lifecycle::DrainController` (constructed once in `serve()` and cloned into both the TCP frontend's `TcpServerConfig.drain` and the admin plane's readiness/drain handlers) makes `/readyz` and the data-plane accept loop react identically to SIGTERM/SIGINT and to `POST /drain`, so in-flight sessions/transactions finish before the process exits. `/openapi.json` and `/pools`/`/pools/{pool}/stats` responses are built directly from the existing `src/spec.rs` JSON value and the WI #1289 `pool::BackendPool::stats()`/`PoolStats` accounting so the served contract and the offline `pgpool spec` inventory share one source of truth (R4/AC3) instead of round-tripping through a separately-typed OpenAPI document.
 capability_refs:
   - id: standard-operational-endpoints
     role: primary
@@ -13,7 +13,7 @@ capability_refs:
     gap: served-contract-matches-offline-spec
     claim: served-contract-matches-offline-spec
     coverage: full
-    rationale: "Closes the served-contract-matches-offline-spec work root: the served /openapi.json and route set are built from the same apps/pgpool/src/spec.rs JSON value as `pgpool spec --format openapi`/`--format routes`, with a conformance test diffing served vs offline output (R4, AC3)."
+    rationale: "Closes the served-contract-matches-offline-spec work root: the served /openapi.json and route set are built from the same src/spec.rs JSON value as `pgpool spec --format openapi`/`--format routes`, with a conformance test diffing served vs offline output (R4, AC3)."
 fill_sections: [logic, state-machine, schema, config, unit-test, e2e-test]
 ---
 
@@ -25,13 +25,13 @@ fill_sections: [logic, state-machine, schema, config, unit-test, e2e-test]
 ```yaml
 coverage_kind: semantic
 changes:
-  - path: apps/pgpool/src/admin/state.rs
+  - path: src/admin/state.rs
     action: modify
     section: schema
     impl_mode: hand-written
     anchor: AdminState
     reason: Own shared admin-plane router state pending an admin schema generator.
-  - path: apps/pgpool/src/admin/types.rs
+  - path: src/admin/types.rs
     action: modify
     section: schema
     impl_mode: hand-written
@@ -58,7 +58,7 @@ nodes:
     label: "Spawn a background task awaiting server_lifecycle::signal::wait_shutdown_signal(); when SIGTERM/SIGINT resolves it, the task calls drain.start_drain() on the shared controller (R2)"
   build_admin_router:
     kind: process
-    label: "Build the admin axum Router directly against AdminState (shared DrainController clone + Vec<NamedPool>, each pairing a pool name/mode with its ConnectionBudget and BackendPool clone): /healthz, /readyz, /metrics, /openapi.json, /docs, GET /pools, GET /pools/{pool}/stats, POST /drain (R1, R3) - hand-rolled rather than libs/service-http's standard_probe_routes because that helper's openapi arg type is fn() -> utoipa::openapi::OpenApi, while apps/pgpool/src/spec.rs's single-source-of-truth OpenAPI document is a serde_json::Value the offline `pgpool spec --format openapi` CLI already serializes directly; routing /openapi.json through a typed utoipa round-trip would risk breaking the byte-for-byte parity R4/AC3 requires, so /openapi.json instead returns Json(pgpool::spec::openapi()) - the exact same Value"
+    label: "Build the admin axum Router directly against AdminState (shared DrainController clone + Vec<NamedPool>, each pairing a pool name/mode with its ConnectionBudget and BackendPool clone): /healthz, /readyz, /metrics, /openapi.json, /docs, GET /pools, GET /pools/{pool}/stats, POST /drain (R1, R3) - hand-rolled rather than libs/service-http's standard_probe_routes because that helper's openapi arg type is fn() -> utoipa::openapi::OpenApi, while src/spec.rs's single-source-of-truth OpenAPI document is a serde_json::Value the offline `pgpool spec --format openapi` CLI already serializes directly; routing /openapi.json through a typed utoipa round-trip would risk breaking the byte-for-byte parity R4/AC3 requires, so /openapi.json instead returns Json(pgpool::spec::openapi()) - the exact same Value"
   run_both_planes:
     kind: process
     label: "tokio::join! the TCP frontend (server_tcp::serve, existing PoolHandler dispatch, unchanged from WI #1289) and the admin plane (server_http::serve_h2c_with_options) concurrently; each is given its OWN one-shot shutdown future that awaits drain.signal().changed()"
@@ -85,7 +85,7 @@ nodes:
     label: "GET /metrics: maps live pgpool_frontend_active, pgpool_backend_active, and pgpool_backend_idle values (each labeled pool=<name>) into metrics-prometheus SampleGroup rows; the shared encoder owns HELP/TYPE, deterministic label ordering, and escaping (AC4)"
   openapi_req:
     kind: terminal
-    label: "GET /openapi.json: returns Json(pgpool::spec::openapi()) - the identical serde_json::Value apps/pgpool/src/spec.rs already builds for `pgpool spec --format openapi` (R4)"
+    label: "GET /openapi.json: returns Json(pgpool::spec::openapi()) - the identical serde_json::Value src/spec.rs already builds for `pgpool spec --format openapi` (R4)"
   docs_req:
     kind: terminal
     label: "GET /docs: static Swagger UI HTML page that loads /openapi.json, mirroring libs/service-http's docs_swagger convention"
@@ -241,13 +241,13 @@ $schema: "https://json-schema.org/draft/2020-12/schema"
 $id: apps-pgpool-admin-plane#schema
 title: pgpool Admin Plane Types
 description: >
-  Types for the served admin HTTP plane in `apps/pgpool/src/admin/`: the
+  Types for the served admin HTTP plane in `src/admin/`: the
   shared router state (one shared DrainController clone plus the named pool
   registry), the named-pool wrapper the admin plane adds on top of WI #1289's
   `pool::BackendPool`/`pool::BackendPoolStats` (which carry no name/mode
   fields), and the wire-shape response bodies for `/pools`,
   `/pools/{pool}/stats`, and `POST /drain`. `PoolList`/`PoolStats` reuse the
-  exact field shape `apps/pgpool/src/spec.rs`'s offline `schemas()` already
+  exact field shape `src/spec.rs`'s offline `schemas()` already
   declares (R4/AC3 byte-for-byte parity with `pgpool spec --format openapi`);
   this section does not redefine `apps::pgpool::pool::{PoolConfig,
   BackendPoolStats}`, `server_lifecycle::{DrainController, DrainState as
@@ -294,7 +294,7 @@ definitions:
     $id: PoolStats
     x-rust-derive: ["Debug", "Clone", "serde::Serialize"]
     required: [name, mode, frontend_active, backend_active, backend_idle]
-    description: "Response body for GET /pools/{pool}/stats and each entry of PoolList.pools; field names/shape are IDENTICAL to the `PoolStats` schema `apps/pgpool/src/spec.rs`'s offline `schemas()` already declares, so the served body and `pgpool spec --format openapi`'s component schema stay byte-for-byte in sync (R4, AC3). Derived per-request from one NamedPool: name/mode copied directly, frontend_active from budget.active(), backend_active/backend_idle from pool.stats() (WI #1289 pool::BackendPoolStats)."
+    description: "Response body for GET /pools/{pool}/stats and each entry of PoolList.pools; field names/shape are IDENTICAL to the `PoolStats` schema `src/spec.rs`'s offline `schemas()` already declares, so the served body and `pgpool spec --format openapi`'s component schema stay byte-for-byte in sync (R4, AC3). Derived per-request from one NamedPool: name/mode copied directly, frontend_active from budget.active(), backend_active/backend_idle from pool.stats() (WI #1289 pool::BackendPoolStats)."
     properties:
       name:
         type: string
@@ -319,7 +319,7 @@ definitions:
     $id: PoolList
     x-rust-derive: ["Debug", "Clone", "serde::Serialize"]
     required: [pools]
-    description: "Response body for GET /pools; matches apps/pgpool/src/spec.rs's offline PoolList schema field-for-field (R4, AC3)."
+    description: "Response body for GET /pools; matches src/spec.rs's offline PoolList schema field-for-field (R4, AC3)."
     properties:
       pools:
         type: array
@@ -330,7 +330,7 @@ definitions:
     $id: DrainResponse
     x-rust-derive: ["Debug", "Clone", "serde::Serialize"]
     required: [draining]
-    description: "Response body for POST /drain, matching apps/pgpool/src/spec.rs's offline DrainState schema (single required boolean field, R4/AC3); returned after calling AdminState.drain.start_drain() (idempotent — repeated POSTs return the same {draining: true} body, see State Machine section)."
+    description: "Response body for POST /drain, matching src/spec.rs's offline DrainState schema (single required boolean field, R4/AC3); returned after calling AdminState.drain.start_drain() (idempotent — repeated POSTs return the same {draining: true} body, see State Machine section)."
     properties:
       draining:
         type: boolean
@@ -367,7 +367,7 @@ definitions:
 <!-- type: config lang: yaml -->
 
 ```yaml
-# Admin plane config additions for `pgpool serve` (apps/pgpool/src/bin/pgpool.rs
+# Admin plane config additions for `pgpool serve` (src/bin/pgpool.rs
 # ServeArgs). No new pooling/backend config lives here (unchanged from WI
 # #1288/#1289); this section adds only the admin-bind override and the
 # pool-name the admin plane needs to label PoolStats/metrics, since
@@ -408,7 +408,7 @@ admin_drain_timeout_ms:
 # --drain-timeout-ms, --pool-acquire-timeout-ms); listed here only for
 # traceability, not redefined by this TD.
 existing_serve_args:
-  source: "apps/pgpool/src/bin/pgpool.rs ServeArgs (WI #1288/#1289, unchanged)"
+  source: "src/bin/pgpool.rs ServeArgs (WI #1288/#1289, unchanged)"
   fields: [bind, backend_host, backend_port, backend_connect_timeout_ms, drain_timeout_ms, pool_acquire_timeout_ms]
 ```
 ## Unit Test

@@ -1,4 +1,4 @@
-// SPEC-MANAGED: apps/pgpool/tech-design/semantic/pgpool-crd-operator-control-plane.md#logic
+// SPEC-MANAGED: tech-design/semantic/pgpool-crd-operator-control-plane.md#logic
 // <HANDWRITE gap="missing-generator:logic:2b5d164e" tracker="#1575" reason="Define the namespaced Pgpool custom resource, provider/role endpoint budgets, and readiness plus connection-budget status schema.">
 use std::collections::BTreeMap;
 

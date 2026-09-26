@@ -30,7 +30,7 @@ flowchart TD
 
 ```yaml
 changes:
-  - path: apps/pgpool/src/k8s/instance.rs
+  - path: src/k8s/instance.rs
     action: modify
     section: logic
     impl_mode: hand-written
@@ -59,7 +59,7 @@ flowchart TD
 
 ```yaml
 changes:
-  - path: apps/pgpool/src/k8s/instance.rs
+  - path: src/k8s/instance.rs
     action: modify
     section: logic
     impl_mode: hand-written

@@ -1,4 +1,4 @@
-// SPEC-MANAGED: apps/pgpool/tech-design/logic/pg-wire-message-codec-frontend-backend-frames.md#logic
+// SPEC-MANAGED: tech-design/logic/pg-wire-message-codec-frontend-backend-frames.md#logic
 // <HANDWRITE gap="missing-generator:logic:pg-wire-codec" tracker="#1287" reason="Wire protocol codec needs generator primitives that do not exist yet.">
 //! Shared byte-level read/write primitives used by `frontend`/`backend`
 //! message encode/decode. Internal to the `wire` module; never panics —

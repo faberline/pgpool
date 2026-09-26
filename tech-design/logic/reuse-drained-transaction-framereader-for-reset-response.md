@@ -54,32 +54,32 @@ flowchart LR
 
 ```yaml
 changes:
-  - path: apps/pgpool/src/pool/backend_pool.rs
+  - path: src/pool/backend_pool.rs
     action: modify
     section: pgpool-reset-reader-reuse
     impl_mode: hand-written
     reason: Add an internal reset route that consumes a caller-supplied drained backend reader while retaining the public generic release fallback.
-  - path: apps/pgpool/src/pool/transaction.rs
+  - path: src/pool/transaction.rs
     action: modify
     section: pgpool-reset-reader-reuse
     impl_mode: hand-written
     reason: Hand the transaction reader to reset only after a validated idle result and reunite failure handling.
-  - path: apps/pgpool/src/wire/reader.rs
+  - path: src/wire/reader.rs
     action: modify
     section: pgpool-reset-reader-reuse
     impl_mode: hand-written
     reason: Provide an explicit drained-buffer predicate without exposing mutable parser internals.
-  - path: apps/pgpool/tests/pool.rs
+  - path: tests/pool.rs
     action: modify
     section: pgpool-reset-reader-reuse
     impl_mode: hand-written
     reason: Preserve generic reset and failure-close regression coverage.
-  - path: apps/pgpool/tests/pool_modes.rs
+  - path: tests/pool_modes.rs
     action: modify
     section: pgpool-reset-reader-reuse
     impl_mode: hand-written
     reason: Exercise contended transaction reset isolation and one-backend capacity through the reused-reader path.
-  - path: apps/pgpool/tests/wire_codec.rs
+  - path: tests/wire_codec.rs
     action: modify
     section: pgpool-reset-reader-reuse
     impl_mode: hand-written
@@ -109,7 +109,7 @@ requirements:
     text: "The unchanged competitor benchmark remains the sole success gate; meter is diagnostic only and a first valid loss reverts production code."
     kind: integration
     risk: high
-    verify: apps/pgpool/benchmarks/pgbouncer-transaction-pooling/run.sh --pgpool-bin target/release/pgpool
+    verify: benchmarks/pgbouncer-transaction-pooling/run.sh --pgpool-bin target/release/pgpool
   transaction_isolation:
     id: R3
     text: "A contended next transaction observes DISCARD ALL isolation and the configured one-backend capacity bound after reader reuse."
@@ -121,5 +121,5 @@ flowchart TD
     r1[R1 drained reader only] --> wire_codec_transaction_reset_reader_reuse_requires_drained_idle_reader[wire_codec::transaction_reset_reader_reuse_requires_drained_idle_reader]
     r2[R2 generic fallback] --> pool_release_return_to_idle_closes_connection_when_reset_fails[pool::release_return_to_idle_closes_connection_when_reset_fails]
     r3[R3 transaction isolation] --> pool_modes_transaction_mode_reused_reset_reader_preserves_isolation_and_capacity[pool_modes::transaction_mode_reused_reset_reader_preserves_isolation_and_capacity]
-    r4[R4 peer gate] --> apps_pgpool_benchmarks_pgbouncer_transaction_pooling_run_sh_pgpool_bin_target_release_pgpool[apps/pgpool/benchmarks/pgbouncer-transaction-pooling/run.sh --pgpool-bin target/release/pgpool]
+    r4[R4 peer gate] --> apps_pgpool_benchmarks_pgbouncer_transaction_pooling_run_sh_pgpool_bin_target_release_pgpool[benchmarks/pgbouncer-transaction-pooling/run.sh --pgpool-bin target/release/pgpool]
 ```

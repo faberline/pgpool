@@ -1,4 +1,4 @@
-// SPEC-MANAGED: apps/pgpool/tech-design/logic/session-mode-proxy-with-auth-passthrough-and-serve-entrypoint.md#logic
+// SPEC-MANAGED: tech-design/logic/session-mode-proxy-with-auth-passthrough-and-serve-entrypoint.md#logic
 // <HANDWRITE gap="missing-generator:logic:pgpool-session-proxy" tracker="#1288" reason="Session-mode proxy needs generator primitives that do not exist yet.">
 //! `SessionHandler`: the `server_tcp::TcpHandler` impl `pgpool serve` binds
 //! to its listener. One backend connection per accepted client

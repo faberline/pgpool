@@ -1,4 +1,4 @@
-// SPEC-MANAGED: apps/pgpool/tech-design/logic/backend-pool-connection-reuse-and-transaction-session-pool-modes.md#logic
+// SPEC-MANAGED: tech-design/logic/backend-pool-connection-reuse-and-transaction-session-pool-modes.md#logic
 // <HANDWRITE gap="missing-generator:logic:pgpool-transaction-phase-telemetry" tracker="#1750" reason="The pool's bounded opt-in phase counters need a generator primitive for atomic diagnostic aggregates.">
 //! Bounded, opt-in aggregate transaction-pool phase telemetry.
 //!

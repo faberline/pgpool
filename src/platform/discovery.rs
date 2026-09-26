@@ -1,4 +1,4 @@
-// SPEC-MANAGED: apps/pgpool/tech-design/semantic/pgpool-runtime-connection-limit-discovery.md#logic
+// SPEC-MANAGED: tech-design/semantic/pgpool-runtime-connection-limit-discovery.md#logic
 // <HANDWRITE gap="missing-generator:logic:pgpool-platform-discovery" tracker="#1570" reason="Live PostgreSQL system-view discovery needs an async adapter primitive.">
 use std::sync::Once;
 

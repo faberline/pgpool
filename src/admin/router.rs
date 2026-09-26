@@ -1,4 +1,4 @@
-// SPEC-MANAGED: apps/pgpool/tech-design/logic/served-admin-plane-with-drain-aware-readiness.md#logic
+// SPEC-MANAGED: tech-design/logic/served-admin-plane-with-drain-aware-readiness.md#logic
 // <HANDWRITE gap="missing-generator:logic:pgpool-admin-plane" tracker="#1290" reason="Admin plane needs generator primitives that do not exist yet.">
 //! Builds the admin `axum::Router` against `AdminState` (TD Logic section
 //! `build_admin_router` node): `/healthz`, `/readyz`, `/metrics`,

@@ -61,17 +61,17 @@ Expired and cancelled waiters are removed before a handoff can target them. If a
 ```yaml
 coverage_kind: semantic
 changes:
-  - path: apps/pgpool/src/pool/backend_pool.rs
+  - path: src/pool/backend_pool.rs
     action: modify
     section: pgpool-capacity-deadline-scheduler
     impl_mode: hand-written
     reason: Own FIFO waiters, one earliest-deadline timer, exact cancellation, and one-slot capacity grants beside physical pool state.
-  - path: apps/pgpool/tests/pool.rs
+  - path: tests/pool.rs
     action: modify
     section: pgpool-capacity-deadline-scheduler
     impl_mode: hand-written
     reason: Verify FIFO grants, expiry, cancellation, and physical permit conservation.
-  - path: apps/pgpool/tests/pool_modes.rs
+  - path: tests/pool_modes.rs
     action: modify
     section: pgpool-capacity-deadline-scheduler
     impl_mode: hand-written
@@ -101,7 +101,7 @@ requirements:
     text: "Meter is diagnostic only and the unchanged competitor benchmark is retained only after error-free unsampled release wins."
     kind: e2e
     risk: high
-    verify: apps/pgpool/benchmarks/pgbouncer-transaction-pooling/run.sh
+    verify: benchmarks/pgbouncer-transaction-pooling/run.sh
   pool_contract:
     id: R4
     text: "Replay cache broadcast stays independent while transaction reuse, reset isolation, liveness, and session state remain correct under queued acquisition."
@@ -113,5 +113,5 @@ flowchart TD
     r1[R1 fifo handoff] --> pool_fifo_capacity_handoff_admits_one_waiter_per_release[pool::fifo_capacity_handoff_admits_one_waiter_per_release]
     r3[R3 deadline and cancellation] --> pool_capacity_waiter_expiry_and_cancellation_preserve_permits[pool::capacity_waiter_expiry_and_cancellation_preserve_permits]
     r4[R4 pool contract] --> cargo_test_p_pgpool_test_pool_test_pool_modes_test_trust_startup_replay[cargo test -p pgpool --test pool --test pool_modes --test trust_startup_replay]
-    ac5[AC5 performance evidence] --> apps_pgpool_benchmarks_pgbouncer_transaction_pooling_run_sh[apps/pgpool/benchmarks/pgbouncer-transaction-pooling/run.sh]
+    ac5[AC5 performance evidence] --> apps_pgpool_benchmarks_pgbouncer_transaction_pooling_run_sh[benchmarks/pgbouncer-transaction-pooling/run.sh]
 ```

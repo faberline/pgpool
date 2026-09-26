@@ -1,4 +1,4 @@
-// SPEC-MANAGED: apps/pgpool/tech-design/logic/pg-wire-message-codec-frontend-backend-frames.md#unit-test
+// SPEC-MANAGED: tech-design/logic/pg-wire-message-codec-frontend-backend-frames.md#unit-test
 // <HANDWRITE gap="missing-generator:logic:pg-wire-codec" tracker="#1287" reason="Wire protocol codec needs generator primitives that do not exist yet.">
 //! Offline (no live Postgres) integration coverage for the pgpool wire
 //! codec, one test function per TD Unit Test requirement (R1-R13).

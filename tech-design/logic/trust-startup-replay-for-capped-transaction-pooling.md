@@ -96,27 +96,27 @@ The cached reply is an optimization for the existing unsupported-cancel surface,
 ```yaml
 coverage_kind: semantic
 changes:
-  - path: apps/pgpool/src/pool/backend_pool.rs
+  - path: src/pool/backend_pool.rs
     action: update
     section: logic
     impl_mode: hand-written
     reason: Add exact-startup replay storage and admission that rechecks a safe reply while waiting for backend capacity.
-  - path: apps/pgpool/src/pool/transaction.rs
+  - path: src/pool/transaction.rs
     action: update
     section: logic
     impl_mode: hand-written
     reason: Perform startup selection before leasing and replay a safe cached ready response before ordinary transaction pooling.
-  - path: apps/pgpool/src/proxy/relay.rs
+  - path: src/proxy/relay.rs
     action: update
     section: logic
     impl_mode: hand-written
     reason: Classify challenge-bearing startup handshakes and capture only a complete safe no-challenge reply.
-  - path: apps/pgpool/tests/trust_startup_replay.rs
+  - path: tests/trust_startup_replay.rs
     action: create
     section: unit-test
     impl_mode: hand-written
     reason: Verify exact match, synthetic cancellation key, challenge exclusion, and concurrent capped trust startup.
-  - path: apps/pgpool/benchmarks/pgbouncer-transaction-pooling/run.sh
+  - path: benchmarks/pgbouncer-transaction-pooling/run.sh
     action: update
     section: unit-test
     impl_mode: hand-written

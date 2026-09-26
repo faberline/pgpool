@@ -31,15 +31,15 @@ flowchart LR
 
 ```yaml
 changes:
-  - path: apps/pgpool/src/pool/backend_pool.rs
+  - path: src/pool/backend_pool.rs
     action: modify
     section: pgpool-reset-reader-reuse-contract
     impl_mode: hand-written
-  - path: apps/pgpool/src/pool/transaction.rs
+  - path: src/pool/transaction.rs
     action: modify
     section: pgpool-reset-reader-reuse-contract
     impl_mode: hand-written
-  - path: apps/pgpool/tests/pool_modes.rs
+  - path: tests/pool_modes.rs
     action: modify
     section: pgpool-reset-reader-reuse-contract
     impl_mode: hand-written
@@ -56,7 +56,7 @@ requirements:
     text: "Benchmark validation still requires all clients and no pgbench errors for every run."
     kind: integration
     risk: high
-    verify: apps/pgpool/benchmarks/pgbouncer-transaction-pooling/run.sh --pgpool-bin target/release/pgpool
+    verify: benchmarks/pgbouncer-transaction-pooling/run.sh --pgpool-bin target/release/pgpool
   reset_boundary:
     id: R1
     text: "Reader reuse cannot change the ReadyForQuery reset boundary, session-state isolation, or failed-reset close outcome."
@@ -66,5 +66,5 @@ requirements:
 ---
 flowchart TD
     r1[R1 reset boundary] --> cargo_test_p_pgpool_lib_test_pool_test_pool_modes[cargo test -p pgpool --lib --test pool --test pool_modes]
-    r2[R2 comparison] --> apps_pgpool_benchmarks_pgbouncer_transaction_pooling_run_sh_pgpool_bin_target_release_pgpool[apps/pgpool/benchmarks/pgbouncer-transaction-pooling/run.sh --pgpool-bin target/release/pgpool]
+    r2[R2 comparison] --> apps_pgpool_benchmarks_pgbouncer_transaction_pooling_run_sh_pgpool_bin_target_release_pgpool[benchmarks/pgbouncer-transaction-pooling/run.sh --pgpool-bin target/release/pgpool]
 ```

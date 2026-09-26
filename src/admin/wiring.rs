@@ -1,9 +1,9 @@
-// SPEC-MANAGED: apps/pgpool/tech-design/logic/served-admin-plane-with-drain-aware-readiness.md#logic
+// SPEC-MANAGED: tech-design/logic/served-admin-plane-with-drain-aware-readiness.md#logic
 // <HANDWRITE gap="missing-generator:logic:pgpool-admin-plane" tracker="#1290" reason="Admin plane needs generator primitives that do not exist yet.">
 //! The two `serve_entry`/`share_drain`/`spawn_signal_task` wiring steps
 //! (TD Logic section) extracted as small, independently testable functions
 //! rather than left inline in `src/bin/pgpool.rs` (a binary target has no
-//! seam `apps/pgpool/tests/*.rs` integration tests can reach into, and R7's
+//! seam `tests/*.rs` integration tests can reach into, and R7's
 //! two verify ids are unit tests): `serve()` calls both of these directly,
 //! so the tests below exercise the exact same code path production uses.
 

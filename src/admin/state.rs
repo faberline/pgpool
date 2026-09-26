@@ -1,4 +1,4 @@
-// SPEC-MANAGED: apps/pgpool/tech-design/logic/served-admin-plane-with-drain-aware-readiness.md#schema
+// SPEC-MANAGED: tech-design/logic/served-admin-plane-with-drain-aware-readiness.md#schema
 // <HANDWRITE gap="missing-generator:logic:pgpool-admin-plane" tracker="#1290" reason="Admin plane needs generator primitives that do not exist yet.">
 //! `AdminState`/`NamedPool` (TD Schema section): the axum shared state for
 //! the admin router — one shared `server_lifecycle::DrainController` clone (the

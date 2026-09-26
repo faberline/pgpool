@@ -1,11 +1,11 @@
-// SPEC-MANAGED: apps/pgpool/tech-design/logic/pg-wire-message-codec-frontend-backend-frames.md#logic
+// SPEC-MANAGED: tech-design/logic/pg-wire-message-codec-frontend-backend-frames.md#logic
 // <HANDWRITE gap="missing-generator:logic:pg-wire-codec" tracker="#1287" reason="Wire protocol codec needs generator primitives that do not exist yet.">
 //! PostgreSQL wire protocol 3.0 message codec: frontend/backend message
 //! types, encode/decode over `bytes::BytesMut`/`bytes::Bytes`, the
 //! incremental bounded `FrameReader`, and `ReadyForQuery`-driven
 //! `TransactionStatus` tracking. No external Postgres protocol crate is
 //! used; see the TD at
-//! `apps/pgpool/tech-design/logic/pg-wire-message-codec-frontend-backend-frames.md`.
+//! `tech-design/logic/pg-wire-message-codec-frontend-backend-frames.md`.
 
 mod codec;
 

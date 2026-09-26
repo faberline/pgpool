@@ -1,4 +1,4 @@
-// SPEC-MANAGED: apps/pgpool/tech-design/semantic/pgpool-global-endpoint-quota-allocation.md#logic
+// SPEC-MANAGED: tech-design/semantic/pgpool-global-endpoint-quota-allocation.md#logic
 // <HANDWRITE gap="missing-generator:logic:pgpool-endpoint-budget" tracker="#1571" reason="Quota state-machine generation is not available.">
 use std::collections::{BTreeMap, BTreeSet};
 

@@ -90,7 +90,7 @@ flowchart TD
 
 ```yaml
 changes:
-  - path: apps/pgpool/src/k8s/budget.rs
+  - path: src/k8s/budget.rs
     action: create
     impl_mode: hand-written
     section: logic

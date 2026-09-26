@@ -89,12 +89,12 @@ flowchart TD
 ```yaml
 coverage_kind: semantic
 changes:
-  - path: apps/pgpool/src/wire/reader.rs
+  - path: src/wire/reader.rs
     action: modify
     section: pgpool-opaque-backend-transaction-relay
     impl_mode: hand-written
     reason: Make only the established backend transaction relay opaque after its bounded envelope is accepted, while preserving strict ReadyForQuery status validation.
-  - path: apps/pgpool/tests/wire_codec.rs
+  - path: tests/wire_codec.rs
     action: modify
     section: pgpool-opaque-backend-transaction-relay
     impl_mode: hand-written
@@ -130,11 +130,11 @@ requirements:
     text: "The release comparison uses its fixed 64-client/16-backend/simple/30-second workload; meter remains diagnostic and any first valid loss is a no-go revert."
     kind: integration
     risk: high
-    verify: apps/pgpool/benchmarks/pgbouncer-transaction-pooling/run.sh --pgpool-bin target/release/pgpool
+    verify: benchmarks/pgbouncer-transaction-pooling/run.sh --pgpool-bin target/release/pgpool
 ---
 flowchart TD
     r1[R1 bounded opaque forwarding] --> wire_codec_transaction_relay_forwards_bounded_non_control_backend_frame_without_payload_validation[wire_codec::transaction_relay_forwards_bounded_non_control_backend_frame_without_payload_validation]
     r2[R2 strict ownership control] --> wire_codec_transaction_relay_rejects_malformed_ready_for_query[wire_codec::transaction_relay_rejects_malformed_ready_for_query]
     r3[R3 existing pool contract] --> cargo_test_p_pgpool_test_wire_codec_test_proxy_test_pool_test_pool_modes[cargo test -p pgpool --test wire_codec --test proxy --test pool --test pool_modes]
-    r4[R4 unchanged competitor gate] --> apps_pgpool_benchmarks_pgbouncer_transaction_pooling_run_sh_pgpool_bin_target_release_pgpool[apps/pgpool/benchmarks/pgbouncer-transaction-pooling/run.sh --pgpool-bin target/release/pgpool]
+    r4[R4 unchanged competitor gate] --> apps_pgpool_benchmarks_pgbouncer_transaction_pooling_run_sh_pgpool_bin_target_release_pgpool[benchmarks/pgbouncer-transaction-pooling/run.sh --pgpool-bin target/release/pgpool]
 ```

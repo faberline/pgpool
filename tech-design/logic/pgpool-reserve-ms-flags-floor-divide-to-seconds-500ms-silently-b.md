@@ -39,37 +39,37 @@ The runtime policy owns timeout units as `Duration`. CLI milliseconds convert ex
 ```yaml
 coverage_kind: semantic
 changes:
-  - path: apps/pgpool/src/pool/reserve.rs
+  - path: src/pool/reserve.rs
     action: modify
     section: logic
     impl_mode: hand-written
     anchor: ReserveLeasePolicy
     reason: Represent reserve, queue, and idle timeouts as Duration and preserve sub-second elapsed time during local idle release.
-  - path: apps/pgpool/src/pool/backend_pool.rs
+  - path: src/pool/backend_pool.rs
     action: modify
     section: logic
     impl_mode: hand-written
     anchor: acquire_internal
     reason: Use the Duration reserve policy directly for normal queue and reserve admission deadlines.
-  - path: apps/pgpool/src/pool/reactor/runtime.rs
+  - path: src/pool/reactor/runtime.rs
     action: modify
     section: logic
     impl_mode: hand-written
     anchor: queue_wait_timeout
     reason: Use the Duration queue policy directly in reactor wait deadlines.
-  - path: apps/pgpool/src/pool/transaction.rs
+  - path: src/pool/transaction.rs
     action: modify
     section: logic
     impl_mode: hand-written
     anchor: new
     reason: Log reserve policy with millisecond values matching the configuration surface.
-  - path: apps/pgpool/src/bin/pgpool.rs
+  - path: src/bin/pgpool.rs
     action: modify
     section: logic
     impl_mode: hand-written
     anchor: serve
     reason: Convert all three PGPOOL_RESERVE or queue millisecond flags without floor division.
-  - path: apps/pgpool/tests/pool.rs
+  - path: tests/pool.rs
     action: modify
     section: unit-test
     impl_mode: hand-written

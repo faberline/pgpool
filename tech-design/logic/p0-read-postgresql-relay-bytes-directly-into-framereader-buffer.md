@@ -31,19 +31,19 @@ flowchart LR
 
 ```yaml
 changes:
-  - path: apps/pgpool/src/wire/reader.rs
+  - path: src/wire/reader.rs
     action: modify
     section: pgpool-direct-reader-buffer-read-contract
     impl_mode: hand-written
-  - path: apps/pgpool/src/proxy/relay.rs
+  - path: src/proxy/relay.rs
     action: modify
     section: pgpool-direct-reader-buffer-read-contract
     impl_mode: hand-written
-  - path: apps/pgpool/src/pool/backend_pool.rs
+  - path: src/pool/backend_pool.rs
     action: modify
     section: pgpool-direct-reader-buffer-read-contract
     impl_mode: hand-written
-  - path: apps/pgpool/tests/wire_codec.rs
+  - path: tests/wire_codec.rs
     action: modify
     section: pgpool-direct-reader-buffer-read-contract
     impl_mode: hand-written

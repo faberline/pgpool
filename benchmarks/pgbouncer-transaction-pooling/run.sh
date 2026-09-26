@@ -14,7 +14,7 @@ readonly METER_DURATION_CAP_SECONDS=$((DURATION_SECONDS + 30))
 readonly SCALE=1
 readonly POOL_ACQUIRE_TIMEOUT_MS=60000
 readonly DATABASE="pgpool_bench"
-readonly REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../../.." && pwd)"
+readonly REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 readonly BENCHMARK_LOCK_TIMEOUT_SECONDS="${PGPOOL_BENCH_LOCK_TIMEOUT_SECONDS:-900}"
 readonly BENCHMARK_LOCK_FILE="${TMPDIR:-/tmp}/pgpool-pgbouncer-transaction-pooling.lock"
 

@@ -31,7 +31,7 @@ flowchart LR
 
 ```yaml
 changes:
-  - path: apps/pgpool/src/bin/pgpool.rs
+  - path: src/bin/pgpool.rs
     action: modify
     section: pgpool-multithread-runtime-contract
     impl_mode: hand-written
@@ -54,9 +54,9 @@ requirements:
     text: "A corrected release benchmark produces a complete no-error comparison result."
     kind: integration
     risk: high
-    verify: apps/pgpool/benchmarks/pgbouncer-transaction-pooling/run.sh --pgpool-bin target/release/pgpool
+    verify: benchmarks/pgbouncer-transaction-pooling/run.sh --pgpool-bin target/release/pgpool
 ---
 flowchart TD
     r1[R1 isolation] --> cargo_test_p_pgpool_lib_test_pool_modes[cargo test -p pgpool --lib --test pool_modes]
-    r2[R2 throughput evidence] --> apps_pgpool_benchmarks_pgbouncer_transaction_pooling_run_sh_pgpool_bin_target_release_pgpool[apps/pgpool/benchmarks/pgbouncer-transaction-pooling/run.sh --pgpool-bin target/release/pgpool]
+    r2[R2 throughput evidence] --> apps_pgpool_benchmarks_pgbouncer_transaction_pooling_run_sh_pgpool_bin_target_release_pgpool[benchmarks/pgbouncer-transaction-pooling/run.sh --pgpool-bin target/release/pgpool]
 ```

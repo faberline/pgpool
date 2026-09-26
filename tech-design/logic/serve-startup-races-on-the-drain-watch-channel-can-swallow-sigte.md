@@ -39,17 +39,17 @@ changes:
     section: logic
     impl_mode: hand-written
     anchor: start_drain
-  - path: apps/pgpool/src/bin/pgpool.rs
+  - path: src/bin/pgpool.rs
     action: modify
     section: logic
     impl_mode: hand-written
     anchor: serve
-  - path: apps/pgpool/src/admin/state.rs
+  - path: src/admin/state.rs
     action: modify
     section: logic
     impl_mode: hand-written
     anchor: AdminState
-  - path: apps/pgpool/src/admin/wiring.rs
+  - path: src/admin/wiring.rs
     action: modify
     section: logic
     impl_mode: hand-written
@@ -101,17 +101,17 @@ changes:
     section: logic
     impl_mode: hand-written
     anchor: start_drain
-  - path: apps/pgpool/src/bin/pgpool.rs
+  - path: src/bin/pgpool.rs
     action: modify
     section: logic
     impl_mode: hand-written
     anchor: serve
-  - path: apps/pgpool/src/admin/state.rs
+  - path: src/admin/state.rs
     action: modify
     section: logic
     impl_mode: hand-written
     anchor: AdminState
-  - path: apps/pgpool/src/admin/wiring.rs
+  - path: src/admin/wiring.rs
     action: modify
     section: logic
     impl_mode: hand-written

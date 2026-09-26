@@ -19,31 +19,31 @@ fill_sections: [logic, state-machine, schema, config, unit-test]
 ```yaml
 coverage_kind: semantic
 changes:
-  - path: apps/pgpool/src/wire/backend.rs
+  - path: src/wire/backend.rs
     action: modify
     section: schema
     impl_mode: hand-written
     anchor: BackendMessage
     reason: Own the PostgreSQL backend-message representation pending a codec schema generator.
-  - path: apps/pgpool/src/wire/config.rs
+  - path: src/wire/config.rs
     action: modify
     section: schema
     impl_mode: hand-written
     anchor: WireCodecConfig
     reason: Own codec bounds and decoding configuration pending a codec schema generator.
-  - path: apps/pgpool/src/wire/error.rs
+  - path: src/wire/error.rs
     action: modify
     section: schema
     impl_mode: hand-written
     anchor: FrameError
     reason: Own typed wire decode errors pending a codec schema generator.
-  - path: apps/pgpool/src/wire/frame.rs
+  - path: src/wire/frame.rs
     action: modify
     section: schema
     impl_mode: hand-written
     anchor: Frame
     reason: Own the raw wire-frame envelope pending a codec schema generator.
-  - path: apps/pgpool/src/wire/frontend.rs
+  - path: src/wire/frontend.rs
     action: modify
     section: schema
     impl_mode: hand-written

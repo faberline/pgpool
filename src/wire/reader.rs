@@ -1,4 +1,4 @@
-// SPEC-MANAGED: apps/pgpool/tech-design/logic/pg-wire-message-codec-frontend-backend-frames.md#logic
+// SPEC-MANAGED: tech-design/logic/pg-wire-message-codec-frontend-backend-frames.md#logic
 // <HANDWRITE gap="missing-generator:logic:pg-wire-codec" tracker="#1287" reason="Wire protocol codec needs generator primitives that do not exist yet.">
 //! `FrameReader`: an incremental reader that handles split/partial reads,
 //! length-prefix validation, and bounded frame size from the TD Config
@@ -114,7 +114,7 @@ impl FrameReader {
     /// Appends directly from a synchronous nonblocking transport. The parser
     /// owns the receive allocation, so readiness reactors avoid copying every
     /// socket read through an intermediate scratch buffer.
-    // @spec apps/pgpool/tech-design/logic/p0-dense-buffer-readiness-reactor.md#logic
+    // @spec tech-design/logic/p0-dense-buffer-readiness-reactor.md#logic
     pub(crate) fn read_from_sync(
         &mut self,
         stream: &mut impl std::io::Read,

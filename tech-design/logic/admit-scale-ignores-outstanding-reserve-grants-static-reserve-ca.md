@@ -40,13 +40,13 @@ Static Pod admission has precedence only over new Pods: outstanding reserve gran
 ```yaml
 coverage_kind: semantic
 changes:
-  - path: apps/pgpool/src/k8s/budget.rs
+  - path: src/k8s/budget.rs
     action: modify
     section: logic
     impl_mode: hand-written
     anchor: reserve_many
     reason: Admit static Pod quota against the allocator quota plus externally-held reserve capacity, preserving the allocator's atomic error and blocked-scale status behavior.
-  - path: apps/pgpool/src/k8s/control.rs
+  - path: src/k8s/control.rs
     action: modify
     section: logic
     impl_mode: hand-written

@@ -31,11 +31,11 @@ flowchart LR
 
 ```yaml
 changes:
-  - path: apps/pgpool/src/pool/backend_pool.rs
+  - path: src/pool/backend_pool.rs
     action: modify
     section: pgpool-static-discard-all-frame-contract
     impl_mode: hand-written
-  - path: apps/pgpool/tests/pool.rs
+  - path: tests/pool.rs
     action: modify
     section: pgpool-static-discard-all-frame-contract
     impl_mode: hand-written

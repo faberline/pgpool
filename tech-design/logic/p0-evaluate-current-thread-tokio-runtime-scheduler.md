@@ -49,7 +49,7 @@ flowchart LR
 
 ```yaml
 changes:
-  - path: apps/pgpool/src/bin/pgpool.rs
+  - path: src/bin/pgpool.rs
     action: modify
     section: pgpool-current-thread-runtime-locality
     impl_mode: hand-written
@@ -67,13 +67,13 @@ requirements:
     text: "Meter may diagnose scheduler contention but its instrumented TPS is diagnostic-only and cannot retain this candidate."
     kind: integration
     risk: medium
-    verify: apps/pgpool/benchmarks/pgbouncer-transaction-pooling/run.sh --meter-bin target/debug/meter
+    verify: benchmarks/pgbouncer-transaction-pooling/run.sh --meter-bin meter
   peer_proof:
     id: R2
     text: "A normal-baseline unchanged 64-client, 16-backend, simple-protocol transaction-pooling comparison completes for 30 seconds without errors and beats PgBouncer; the first valid loss reverts the candidate."
     kind: e2e
     risk: high
-    verify: apps/pgpool/benchmarks/pgbouncer-transaction-pooling/run.sh --pgpool-bin target/release/pgpool
+    verify: benchmarks/pgbouncer-transaction-pooling/run.sh --pgpool-bin target/release/pgpool
   runtime_contract:
     id: R1
     text: "The binary builds with Tokio's current-thread runtime scheduler and preserves the transaction-pooling test surface."
@@ -83,6 +83,6 @@ requirements:
 ---
 flowchart TD
     r1[R1 runtime contract] --> cargo_test_p_pgpool_test_pool_test_pool_modes_test_proxy_test_trust_startup_replay_test_wire_codec[cargo test -p pgpool --test pool --test pool_modes --test proxy --test trust_startup_replay --test wire_codec]
-    r2[R2 peer proof] --> apps_pgpool_benchmarks_pgbouncer_transaction_pooling_run_sh_pgpool_bin_target_release_pgpool[apps/pgpool/benchmarks/pgbouncer-transaction-pooling/run.sh --pgpool-bin target/release/pgpool]
-    r3[R3 diagnostic only] --> apps_pgpool_benchmarks_pgbouncer_transaction_pooling_run_sh_meter_bin_target_debug_meter[apps/pgpool/benchmarks/pgbouncer-transaction-pooling/run.sh --meter-bin target/debug/meter]
+    r2[R2 peer proof] --> apps_pgpool_benchmarks_pgbouncer_transaction_pooling_run_sh_pgpool_bin_target_release_pgpool[benchmarks/pgbouncer-transaction-pooling/run.sh --pgpool-bin target/release/pgpool]
+    r3[R3 diagnostic only] --> apps_pgpool_benchmarks_pgbouncer_transaction_pooling_run_sh_meter_bin_target_debug_meter[benchmarks/pgbouncer-transaction-pooling/run.sh --meter-bin meter]
 ```

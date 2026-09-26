@@ -1,4 +1,4 @@
-// SPEC-MANAGED: apps/pgpool/tech-design/logic/session-mode-proxy-with-auth-passthrough-and-serve-entrypoint.md#schema
+// SPEC-MANAGED: tech-design/logic/session-mode-proxy-with-auth-passthrough-and-serve-entrypoint.md#schema
 // <HANDWRITE gap="missing-generator:logic:pgpool-session-proxy" tracker="#1288" reason="Session-mode proxy needs generator primitives that do not exist yet.">
 //! Rejection/outcome/error taxonomy for one session-mode proxy session, per
 //! the TD Schema and Session State Machine sections.

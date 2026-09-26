@@ -59,27 +59,27 @@ On macOS, install the local dependencies and build the release binary:
 ```bash
 brew install postgresql@18 pgbouncer
 cargo build --release -p pgpool
-apps/pgpool/benchmarks/pgbouncer-transaction-pooling/run.sh
+benchmarks/pgbouncer-transaction-pooling/run.sh
 ```
 
 Use `--dry-run` to inspect the profile without probing commands, creating a
 temporary cluster, binding ports, or requiring any installed benchmark tool:
 
 ```bash
-apps/pgpool/benchmarks/pgbouncer-transaction-pooling/run.sh --dry-run
+benchmarks/pgbouncer-transaction-pooling/run.sh --dry-run
 ```
 
 For the contention-free transaction-relay profile used for P0 data-plane work:
 
 ```bash
-apps/pgpool/benchmarks/pgbouncer-transaction-pooling/run.sh \
+benchmarks/pgbouncer-transaction-pooling/run.sh \
   --workload select-only
 ```
 
 For a debug or custom pgpool binary, pass it explicitly:
 
 ```bash
-apps/pgpool/benchmarks/pgbouncer-transaction-pooling/run.sh \
+benchmarks/pgbouncer-transaction-pooling/run.sh \
   --pgpool-bin target/debug/pgpool
 ```
 
@@ -88,7 +88,7 @@ or pool semantics, add `--phase-telemetry` (and retain the work directory):
 
 ```bash
 PGPOOL_BENCH_KEEP_WORK_DIR=true \
-apps/pgpool/benchmarks/pgbouncer-transaction-pooling/run.sh \
+benchmarks/pgbouncer-transaction-pooling/run.sh \
   --workload select-only \
   --phase-telemetry
 ```
@@ -114,15 +114,15 @@ meter and select the sampled target. The default is pgpool:
 
 ```bash
 cargo build -p meter-cli --bin meter
-apps/pgpool/benchmarks/pgbouncer-transaction-pooling/run.sh \
-  --meter-bin target/debug/meter
+benchmarks/pgbouncer-transaction-pooling/run.sh \
+  --meter-bin meter
 ```
 
 To source-attribute PgBouncer's event-loop path with the same workload, use:
 
 ```bash
-apps/pgpool/benchmarks/pgbouncer-transaction-pooling/run.sh \
-  --meter-bin target/debug/meter \
+benchmarks/pgbouncer-transaction-pooling/run.sh \
+  --meter-bin meter \
   --meter-target pgbouncer
 ```
 

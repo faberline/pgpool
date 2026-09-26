@@ -1,4 +1,4 @@
-// SPEC-MANAGED: apps/pgpool/tech-design/semantic/pgpool-drain-safe-control-plane-status.md#logic
+// SPEC-MANAGED: tech-design/semantic/pgpool-drain-safe-control-plane-status.md#logic
 // <HANDWRITE gap="missing-generator:logic:pgpool-control-plane" tracker="#1573" reason="Reconciliation state-machine and metrics generation are not available.">
 use std::collections::BTreeMap;
 

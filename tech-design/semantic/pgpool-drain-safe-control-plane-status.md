@@ -95,25 +95,25 @@ flowchart TD
 
 ```yaml
 changes:
-  - path: apps/pgpool/src/k8s/budget.rs
+  - path: src/k8s/budget.rs
     action: modify
     impl_mode: hand-written
     section: logic
     anchor: GlobalConnectionBudget
     description: Expose endpoint iteration for status projection.
-  - path: apps/pgpool/src/k8s/control.rs
+  - path: src/k8s/control.rs
     action: create
     impl_mode: hand-written
     section: logic
     anchor: PgpoolControlPlane
     description: Implement scale admission, drain-before-release, status, and metrics.
-  - path: apps/pgpool/src/bin/pgpool.rs
+  - path: src/bin/pgpool.rs
     action: modify
     impl_mode: hand-written
     section: logic
     anchor: main
     description: Consume the admitted per-Pod backend quota from environment or CLI.
-  - path: apps/pgpool/tests/cli_contract.rs
+  - path: tests/cli_contract.rs
     action: modify
     impl_mode: hand-written
     section: unit-test

@@ -1,4 +1,4 @@
-// SPEC-MANAGED: apps/pgpool/tech-design/semantic/pgpool-crd-operator-control-plane.md#logic
+// SPEC-MANAGED: tech-design/semantic/pgpool-crd-operator-control-plane.md#logic
 // <HANDWRITE gap="missing-generator:logic:4a951ea7" tracker="#1575" reason="Export Pgpool CRD, render, reconcile, CRD YAML normalization, and operator deployment-manifest rendering.">
 pub mod crd;
 pub mod reconcile;
@@ -118,7 +118,7 @@ pub fn operator_manifests(namespace: &str) -> Vec<Value> {
                         "serviceAccountName": name,
                         "securityContext": { "runAsNonRoot": true, "seccompProfile": { "type": "RuntimeDefault" } },
                         "containers": [{
-                            "name": "operator", "image": "ghcr.io/chrischeng-c4/pgpool:latest",
+                            "name": "operator", "image": "ghcr.io/faberline/pgpool:latest",
                             "command": ["pgpool", "k8s", "operator", "run"],
                             "env": [
                                 { "name": "POD_NAME", "valueFrom": { "fieldRef": { "fieldPath": "metadata.name" } } },

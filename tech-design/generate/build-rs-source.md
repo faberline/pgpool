@@ -1,10 +1,10 @@
 ---
 id: apps-pgpool-build-rs
-summary: Lossless rust-source-unit coverage for `apps/pgpool/build.rs`.
+summary: Lossless rust-source-unit coverage for `build.rs`.
 fill_sections: [rust-source-unit, changes]
 ---
 
-# Fillback apps/pgpool/build.rs
+# Fillback build.rs
 
 ## Source
 <!-- type: rust-source-unit lang: rust -->
@@ -22,7 +22,7 @@ fn main() {
 
 ```yaml
 changes:
-  - path: "apps/pgpool/build.rs"
+  - path: "build.rs"
     action: modify
     section: rust-source-unit
     impl_mode: codegen

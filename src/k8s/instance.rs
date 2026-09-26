@@ -1,4 +1,4 @@
-// SPEC-MANAGED: apps/pgpool/tech-design/semantic/pgpool-stateless-deployment-instance.md#logic
+// SPEC-MANAGED: tech-design/semantic/pgpool-stateless-deployment-instance.md#logic
 // <HANDWRITE gap="missing-generator:logic:pgpool-k8s-instance" tracker="#1561" reason="Shared Deployment composition needs a typed Rust generator primitive.">
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
@@ -76,7 +76,7 @@ pub fn spec_for_profile(profile: InstanceProfile) -> PgpoolInstanceSpec {
         InstanceProfile::Staging => PgpoolInstanceSpec {
             name: "pgpool".into(),
             namespace: "database".into(),
-            image: "ghcr.io/chrischeng-c4/pgpool:latest".into(),
+            image: "ghcr.io/faberline/pgpool:latest".into(),
             replicas: 2,
             backend_host: "postgres.database.example".into(),
             backend_port: 5432,
@@ -94,7 +94,7 @@ pub fn spec_for_profile(profile: InstanceProfile) -> PgpoolInstanceSpec {
         InstanceProfile::Prod => PgpoolInstanceSpec {
             name: "pgpool".into(),
             namespace: "database".into(),
-            image: "ghcr.io/chrischeng-c4/pgpool:latest".into(),
+            image: "ghcr.io/faberline/pgpool:latest".into(),
             replicas: 3,
             backend_host: "postgres.database.example".into(),
             backend_port: 5432,

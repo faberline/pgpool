@@ -1,4 +1,4 @@
-// SPEC-MANAGED: apps/pgpool/tech-design/logic/backend-pool-connection-reuse-and-transaction-session-pool-modes.md#logic
+// SPEC-MANAGED: tech-design/logic/backend-pool-connection-reuse-and-transaction-session-pool-modes.md#logic
 // <HANDWRITE gap="missing-generator:logic:pgpool-backend-pool" tracker="#1289" reason="Backend pool needs generator primitives that do not exist yet.">
 //! `BackendPool`: the shared backend-connection pool used by both pool
 //! modes (Logic section). Capacity (R1) is tracked with a `tokio::sync::Semaphore`
@@ -245,7 +245,7 @@ impl BackendPool {
         self.acquire_internal(false).await
     }
 
-    /// @spec apps/pgpool/tech-design/logic/trust-startup-replay-for-capped-transaction-pooling.md#logic
+    /// @spec tech-design/logic/trust-startup-replay-for-capped-transaction-pooling.md#logic
     /// Admits a transaction client after its startup packet is known. Exact
     /// trust/no-challenge replies bypass a physical backend lease; otherwise
     /// this waits for a fresh connection while rechecking the cache after
@@ -331,7 +331,7 @@ impl BackendPool {
         }
     }
 
-    /// @spec apps/pgpool/tech-design/logic/trust-startup-replay-for-capped-transaction-pooling.md#logic
+    /// @spec tech-design/logic/trust-startup-replay-for-capped-transaction-pooling.md#logic
     /// Publishes one complete, challenge-free startup response. Existing
     /// entries are never overwritten, and the bounded cache only accepts
     /// exact startup identities.

@@ -7,7 +7,7 @@ capability_refs:
     gap: backend-pool-and-reuse
     claim: backend-pool-and-reuse
     coverage: full
-    rationale: "Defines and closes the backend-pool-and-reuse work root: the apps/pgpool/src/pool/ BackendPool with capacity-bounded acquire/acquire_fresh, idle reuse with a liveness check, and a DISCARD ALL reset-between-owners step before a connection returns to the idle set, verified by cargo test -p pgpool --test pool_modes plus offline apps/pgpool/tests/pool.rs coverage."
+    rationale: "Defines and closes the backend-pool-and-reuse work root: the src/pool/ BackendPool with capacity-bounded acquire/acquire_fresh, idle reuse with a liveness check, and a DISCARD ALL reset-between-owners step before a connection returns to the idle set, verified by cargo test -p pgpool --test pool_modes plus offline tests/pool.rs coverage."
   - id: postgres-pooler-core
     role: primary
     gap: transaction-session-pool-modes
@@ -47,7 +47,7 @@ nodes:
     label: "RuntimePlan::PoolMode (fixed for the process)"
   session_mode_delegate:
     kind: terminal
-    label: "Session mode: delegates to the unchanged WI #1288 SessionHandler::run_session pipeline, except connect_backend now calls BackendPool::acquire_fresh() (capacity-bounded by max_backend_connections, R1) instead of a raw TcpStream::connect, and teardown calls BackendPool::release(id, stream, LeaseDisposition::Close) instead of just dropping the socket; the per-message auth-passthrough/relay steps are unchanged and are documented in apps/pgpool/tech-design/logic/session-mode-proxy-with-auth-passthrough-and-serve-entrypoint.md, not redrawn here"
+    label: "Session mode: delegates to the unchanged WI #1288 SessionHandler::run_session pipeline, except connect_backend now calls BackendPool::acquire_fresh() (capacity-bounded by max_backend_connections, R1) instead of a raw TcpStream::connect, and teardown calls BackendPool::release(id, stream, LeaseDisposition::Close) instead of just dropping the socket; the per-message auth-passthrough/relay steps are unchanged and are documented in tech-design/logic/session-mode-proxy-with-auth-passthrough-and-serve-entrypoint.md, not redrawn here"
   txn_admit_handshake:
     kind: process
     label: "Transaction mode: BackendPool::acquire_fresh() dials a brand-new backend connection for this client's own one-time real startup+auth relay (reusing the frame-aware relay_startup/relay_until_ready mechanism from the session-mode proxy), bounded by the shared max_backend_connections capacity (R1)"
@@ -505,13 +505,13 @@ definitions:
 ```yaml
 coverage_kind: semantic
 changes:
-  - path: apps/pgpool/src/pool/handler.rs
+  - path: src/pool/handler.rs
     action: modify
     section: schema
     impl_mode: hand-written
     anchor: PoolHandler
     reason: Pool-mode dispatch remains hand-written until the backend-pool schema generator can emit its TcpHandler integration.
-  - path: apps/pgpool/src/pool/types.rs
+  - path: src/pool/types.rs
     action: modify
     section: schema
     impl_mode: hand-written

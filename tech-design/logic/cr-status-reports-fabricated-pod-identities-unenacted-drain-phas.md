@@ -45,31 +45,31 @@ Reconcile status is observational: only Pods returned by the Deployment selector
 ```yaml
 coverage_kind: semantic
 changes:
-  - path: apps/pgpool/src/operator/reconcile.rs
+  - path: src/operator/reconcile.rs
     action: modify
     section: logic
     impl_mode: hand-written
     anchor: plan_capacity
     reason: Project only selected Pod names and observed readiness into plan context; remove fabricated drain records and explicitly mark reserve accounting unavailable.
-  - path: apps/pgpool/src/k8s/control.rs
+  - path: src/k8s/control.rs
     action: modify
     section: logic
     impl_mode: hand-written
     anchor: status
     reason: Distinguish control-plane reserve ledger availability from endpoint discovery availability in the shared status context.
-  - path: apps/pgpool/src/operator/crd.rs
+  - path: src/operator/crd.rs
     action: modify
     section: logic
     impl_mode: hand-written
     anchor: from_control_plane
     reason: Omit reserve counters when no live reserve ledger exists and expose whether reserve accounting is available.
-  - path: apps/pgpool/tests/reconcile_planning.rs
+  - path: tests/reconcile_planning.rs
     action: modify
     section: unit-test
     impl_mode: hand-written
     anchor: context_aware_status_projects_capacity_plan
     reason: Verify CR status omits unsupported reserve counters and exposes unavailable reserve accounting.
-  - path: apps/pgpool/tests/operator.rs
+  - path: tests/operator.rs
     action: modify
     section: unit-test
     impl_mode: hand-written

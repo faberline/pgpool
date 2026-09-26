@@ -90,18 +90,18 @@ flowchart TD
 
 ```yaml
 changes:
-  - path: apps/pgpool/Cargo.toml
+  - path: Cargo.toml
     action: modify
     impl_mode: hand-written
     section: logic
     description: Promote tokio-postgres to a runtime dependency for live endpoint discovery.
-  - path: apps/pgpool/src/platform/discovery.rs
+  - path: src/platform/discovery.rs
     action: create
     impl_mode: hand-written
     section: logic
     anchor: discover_connection_facts
     description: Query runtime connection facts and apply advisory caps.
-  - path: apps/pgpool/tests/connection_discovery.rs
+  - path: tests/connection_discovery.rs
     action: create
     impl_mode: hand-written
     section: unit-test

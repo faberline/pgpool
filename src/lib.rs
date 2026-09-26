@@ -1,4 +1,4 @@
-// SPEC-MANAGED: apps/pgpool/tech-design/semantic/source/apps-pgpool-src-lib-rs.md#logic
+// SPEC-MANAGED: tech-design/semantic/source/apps-pgpool-src-lib-rs.md#logic
 // <HANDWRITE gap="missing-generator:logic:pgpool-bootstrap" tracker="#pgpool-bootstrap" reason="Initial working-name app scaffold before generated source ownership lands.">
 use std::time::Duration;
 
@@ -9,17 +9,17 @@ use server_tcp::TcpSocketOptions;
 
 pub mod spec;
 
-// SPEC-MANAGED: apps/pgpool/tech-design/semantic/pgpool-runtime-connection-limit-discovery.md#logic
+// SPEC-MANAGED: tech-design/semantic/pgpool-runtime-connection-limit-discovery.md#logic
 // <HANDWRITE gap="missing-generator:logic:pgpool-platform-discovery" tracker="#1570" reason="Provider-typed live PostgreSQL discovery needs an async adapter primitive.">
 pub mod platform;
 // </HANDWRITE>
 
-// SPEC-MANAGED: apps/pgpool/tech-design/semantic/pgpool-stateless-deployment-instance.md#logic
+// SPEC-MANAGED: tech-design/semantic/pgpool-stateless-deployment-instance.md#logic
 // <HANDWRITE gap="missing-generator:logic:pgpool-k8s-instance" tracker="#1561" reason="Typed shared-renderer composition needs a Rust manifest generator primitive.">
 pub mod k8s;
 // </HANDWRITE>
 
-// SPEC-MANAGED: apps/pgpool/tech-design/semantic/pgpool-crd-operator-control-plane.md#logic
+// SPEC-MANAGED: tech-design/semantic/pgpool-crd-operator-control-plane.md#logic
 // <HANDWRITE gap="missing-generator:logic:pgpool-operator" tracker="#1575" reason="Typed kube CustomResource and ManagedService composition require hand-written Rust integration.">
 pub mod operator;
 // </HANDWRITE>
@@ -106,22 +106,22 @@ pub fn runtime_plan_json() -> String {
 }
 // </HANDWRITE>
 
-// SPEC-MANAGED: apps/pgpool/tech-design/logic/pg-wire-message-codec-frontend-backend-frames.md#logic
+// SPEC-MANAGED: tech-design/logic/pg-wire-message-codec-frontend-backend-frames.md#logic
 // <HANDWRITE gap="missing-generator:logic:pg-wire-codec" tracker="#1287" reason="Wire protocol codec needs generator primitives that do not exist yet.">
 pub mod wire;
 // </HANDWRITE>
 
-// SPEC-MANAGED: apps/pgpool/tech-design/logic/session-mode-proxy-with-auth-passthrough-and-serve-entrypoint.md#logic
+// SPEC-MANAGED: tech-design/logic/session-mode-proxy-with-auth-passthrough-and-serve-entrypoint.md#logic
 // <HANDWRITE gap="missing-generator:logic:pgpool-session-proxy" tracker="#1288" reason="Session-mode proxy needs generator primitives that do not exist yet.">
 pub mod proxy;
 // </HANDWRITE>
 
-// SPEC-MANAGED: apps/pgpool/tech-design/logic/backend-pool-connection-reuse-and-transaction-session-pool-modes.md#logic
+// SPEC-MANAGED: tech-design/logic/backend-pool-connection-reuse-and-transaction-session-pool-modes.md#logic
 // <HANDWRITE gap="missing-generator:logic:pgpool-backend-pool" tracker="#1289" reason="Backend pool needs generator primitives that do not exist yet.">
 pub mod pool;
 // </HANDWRITE>
 
-// SPEC-MANAGED: apps/pgpool/tech-design/logic/served-admin-plane-with-drain-aware-readiness.md#logic
+// SPEC-MANAGED: tech-design/logic/served-admin-plane-with-drain-aware-readiness.md#logic
 // <HANDWRITE gap="missing-generator:logic:pgpool-admin-plane" tracker="#1290" reason="Admin plane needs generator primitives that do not exist yet.">
 pub mod admin;
 // </HANDWRITE>

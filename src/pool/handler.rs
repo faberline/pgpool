@@ -1,4 +1,4 @@
-// SPEC-MANAGED: apps/pgpool/tech-design/logic/backend-pool-connection-reuse-and-transaction-session-pool-modes.md#schema
+// SPEC-MANAGED: tech-design/logic/backend-pool-connection-reuse-and-transaction-session-pool-modes.md#schema
 // <HANDWRITE gap="missing-generator:logic:pgpool-backend-pool" tracker="#1289" reason="Backend pool needs generator primitives that do not exist yet.">
 //! `PoolHandler`: the single `server_tcp::TcpHandler` `pgpool serve` binds
 //! to its listener, selected once at process start from

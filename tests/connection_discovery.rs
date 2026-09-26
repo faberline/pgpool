@@ -1,4 +1,4 @@
-// SPEC-MANAGED: apps/pgpool/tech-design/semantic/pgpool-runtime-connection-limit-discovery.md#unit-test
+// SPEC-MANAGED: tech-design/semantic/pgpool-runtime-connection-limit-discovery.md#unit-test
 // <HANDWRITE gap="missing-generator:unit-test:pgpool-platform-discovery" tracker="#1570" reason="Real PostgreSQL discovery fixture generation is not available.">
 use std::sync::OnceLock;
 
@@ -139,7 +139,7 @@ async fn cloudsql_discovery_succeeds_against_tls_required_postgres() {
     let Ok(port) = std::env::var("PGPOOL_TLS_DISCOVERY_PORT") else {
         eprintln!(
             "skipping cloudsql_discovery_succeeds_against_tls_required_postgres: \
-             run `sh apps/pgpool/tests/tls_required_discovery.sh`"
+             run `sh tests/tls_required_discovery.sh`"
         );
         return;
     };

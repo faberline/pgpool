@@ -34,15 +34,15 @@ flowchart TD
 
 ```yaml
 changes:
-  - path: apps/pgpool/benchmarks/pgbouncer-transaction-pooling/run.sh
+  - path: benchmarks/pgbouncer-transaction-pooling/run.sh
     action: modify
     section: pgbouncer-always-reset-contract
     impl_mode: hand-written
-  - path: apps/pgpool/benchmarks/pgbouncer-transaction-pooling/README.md
+  - path: benchmarks/pgbouncer-transaction-pooling/README.md
     action: modify
     section: pgbouncer-always-reset-contract
     impl_mode: hand-written
-  - path: apps/pgpool/tests/pgbouncer_benchmark.rs
+  - path: tests/pgbouncer_benchmark.rs
     action: modify
     section: pgbouncer-always-reset-contract
     impl_mode: hand-written

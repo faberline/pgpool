@@ -37,13 +37,13 @@ A Pod name is reusable across endpoints because a single Deployment Pod may serv
 ```yaml
 coverage_kind: semantic
 changes:
-  - path: apps/pgpool/src/k8s/control.rs
+  - path: src/k8s/control.rs
     action: modify
     section: logic
     impl_mode: hand-written
     anchor: admit_scale
     reason: Key pod control state by endpoint plus Pod, require endpoint-scoped lifecycle routing, and test cross-endpoint release.
-  - path: apps/pgpool/tests/operator.rs
+  - path: tests/operator.rs
     action: modify
     section: unit-test
     impl_mode: hand-written

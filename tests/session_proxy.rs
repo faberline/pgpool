@@ -1,9 +1,9 @@
-// SPEC-MANAGED: apps/pgpool/tech-design/logic/session-mode-proxy-with-auth-passthrough-and-serve-entrypoint.md#logic
+// SPEC-MANAGED: tech-design/logic/session-mode-proxy-with-auth-passthrough-and-serve-entrypoint.md#logic
 // <HANDWRITE gap="missing-generator:logic:pgpool-session-proxy" tracker="#1288" reason="Session-mode proxy needs generator primitives that do not exist yet.">
 //! End-to-end coverage against a real local Postgres (AC1-AC4). Every test
 //! here graceful-skips (prints why, then returns) when the environment's
 //! Postgres isn't reachable, per the repo's "real services over mocks, skip
-//! gracefully" testing convention -- see `apps/pgpool/CLAUDE.md`/root
+//! gracefully" testing convention -- see `CLAUDE.md`/root
 //! `CLAUDE.md` Testing section.
 
 use std::net::SocketAddr;
@@ -61,7 +61,7 @@ fn proxy_dsn(proxy_addr: SocketAddr, user: &str) -> String {
 /// (ParseComplete/BindComplete/ParameterDescription/NoData) are outside the
 /// currently-implemented wire codec's message set -- a pre-existing gap in
 /// the separate wire-codec TD (tracker #1287,
-/// `apps/pgpool/src/wire/backend.rs`), which only decodes
+/// `src/wire/backend.rs`), which only decodes
 /// Authentication*/ParameterStatus/BackendKeyData/ReadyForQuery/
 /// RowDescription/DataRow/CommandComplete/ErrorResponse/NoticeResponse.
 /// Since this session-proxy work item (#1288) treats any undecodable frame
@@ -263,7 +263,7 @@ async fn session_mode_relays_extended_copy_notify_and_empty_query() {
 /// What *is* covered, offline, against a fake in-memory backend (no
 /// fabrication -- these assert real relayed bytes):
 /// - `proxy::auth_frames_relayed_verbatim_for_cleartext_md5_and_scram`
-///   (`apps/pgpool/tests/proxy.rs`) drives a full
+///   (`tests/proxy.rs`) drives a full
 ///   AuthenticationSasl -> SaslInitialResponse -> AuthenticationSaslContinue
 ///   -> SaslResponse -> AuthenticationSaslFinal -> AuthenticationOk exchange
 ///   and asserts every relayed frame's payload is byte-identical to what was

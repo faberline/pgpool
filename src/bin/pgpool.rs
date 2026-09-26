@@ -1,4 +1,4 @@
-// SPEC-MANAGED: apps/pgpool/tech-design/semantic/source/apps-pgpool-src-bin-pgpool-rs.md#logic
+// SPEC-MANAGED: tech-design/semantic/source/apps-pgpool-src-bin-pgpool-rs.md#logic
 // <HANDWRITE gap="missing-generator:logic:pgpool-bootstrap" tracker="#pgpool-bootstrap" reason="Initial working-name CLI surface before generated command wiring exists.">
 use anyhow::Result;
 use clap::{Parser, Subcommand, ValueEnum};
@@ -318,7 +318,7 @@ struct IssueCommentArgs {
 
 const TOOL: cli_std::ToolInfo = cli_std::ToolInfo {
     project: "pgpool",
-    repo: "chrischeng-c4/axiom",
+    repo: "faberline/pgpool",
     target: env!("PGPOOL_TARGET"),
     version: env!("CARGO_PKG_VERSION"),
     git_sha: env!("PGPOOL_GIT_SHA"),

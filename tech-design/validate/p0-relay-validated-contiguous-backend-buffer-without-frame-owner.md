@@ -51,22 +51,22 @@ A descriptor cannot be consumed twice or after another reader mutation. Write fa
 
 ```yaml
 changes:
-  - path: apps/pgpool/src/wire/reader.rs
+  - path: src/wire/reader.rs
     action: modify
     section: pgpool-contiguous-validated-relay-prefix-contract
     impl_mode: hand-written
     reason: Define an internal descriptor that scans backend frames without consuming buffer bytes and a guarded consume operation that commits Ready status only after output success.
-  - path: apps/pgpool/src/proxy/relay.rs
+  - path: src/proxy/relay.rs
     action: modify
     section: pgpool-contiguous-validated-relay-prefix-contract
     impl_mode: hand-written
     reason: Make backend relay obtain a prefix descriptor, borrow the contiguous bytes for the existing single write_all, and request post-write consumption without retaining a copied batch.
-  - path: apps/pgpool/src/pool/transaction.rs
+  - path: src/pool/transaction.rs
     action: modify
     section: pgpool-contiguous-validated-relay-prefix-contract
     impl_mode: hand-written
     reason: Preserve existing transaction outcome handling while receiving Ready or terminal facts only after direct-prefix output and consumption.
-  - path: apps/pgpool/tests/wire_codec.rs
+  - path: tests/wire_codec.rs
     action: modify
     section: pgpool-contiguous-validated-relay-prefix-contract
     impl_mode: hand-written
@@ -90,7 +90,7 @@ requirements:
     text: "Retention requires three clean unsampled unchanged release comparisons matching or exceeding contemporaneous PgBouncer; meter sampling is diagnostic, and the first valid loss reverts the production candidate."
     kind: e2e
     risk: high
-    verify: apps/pgpool/benchmarks/pgbouncer-transaction-pooling/run.sh --pgpool-bin target/release/pgpool
+    verify: benchmarks/pgbouncer-transaction-pooling/run.sh --pgpool-bin target/release/pgpool
   pool_behavior:
     id: R3
     text: "Transaction pooling retains exact ReadyForQuery ownership, reset isolation, and bounded backend capacity with the direct backend-prefix relay."
@@ -108,5 +108,5 @@ flowchart TD
     r1[R1 post write consume] --> wire_codec_backend_relay_prefix_validates_and_consumes_contiguous_frames[wire_codec::backend_relay_prefix_validates_and_consumes_contiguous_frames]
     r2[R2 boundary failures] --> wire_codec_backend_relay_prefix_preserves_incomplete_and_malformed_suffix_boundaries[wire_codec::backend_relay_prefix_preserves_incomplete_and_malformed_suffix_boundaries]
     r3[R3 pool behavior] --> cargo_test_p_pgpool_test_pool_test_pool_modes_test_trust_startup_replay_test_proxy[cargo test -p pgpool --test pool --test pool_modes --test trust_startup_replay --test proxy]
-    r4[R4 competitor proof] --> apps_pgpool_benchmarks_pgbouncer_transaction_pooling_run_sh_pgpool_bin_target_release_pgpool[apps/pgpool/benchmarks/pgbouncer-transaction-pooling/run.sh --pgpool-bin target/release/pgpool]
+    r4[R4 competitor proof] --> apps_pgpool_benchmarks_pgbouncer_transaction_pooling_run_sh_pgpool_bin_target_release_pgpool[benchmarks/pgbouncer-transaction-pooling/run.sh --pgpool-bin target/release/pgpool]
 ```

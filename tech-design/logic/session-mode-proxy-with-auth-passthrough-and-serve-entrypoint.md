@@ -25,13 +25,13 @@ fill_sections: [logic, state-machine, schema, config, unit-test]
 ```yaml
 coverage_kind: semantic
 changes:
-  - path: apps/pgpool/src/proxy/config.rs
+  - path: src/proxy/config.rs
     action: modify
     section: schema
     impl_mode: hand-written
     anchor: SessionProxyConfig
     reason: Own session-proxy configuration pending a proxy schema generator.
-  - path: apps/pgpool/src/proxy/error.rs
+  - path: src/proxy/error.rs
     action: modify
     section: schema
     impl_mode: hand-written
@@ -254,7 +254,7 @@ $schema: "https://json-schema.org/draft/2020-12/schema"
 $id: apps-pgpool-session-proxy#schema
 title: pgpool Session Proxy Types
 description: >
-  Configuration and outcome types for the `apps/pgpool/src/proxy/` session-mode
+  Configuration and outcome types for the `src/proxy/` session-mode
   (1:1) proxy: the backend endpoint seam, the per-session config bundle
   (budget/timeouts/wire codec), the rejection-reason -> wire ErrorResponse
   mapping, and the session outcome taxonomy tests assert on. Reuses
@@ -357,7 +357,7 @@ definitions:
 # TLS config lives here (out of scope for this slice). frontend_budget and
 # the frontend bind/socket options continue to come from RuntimePlan
 # (max_frontend_connections / frontend_bind / frontend_socket, see
-# apps/pgpool/src/lib.rs); this section adds only the backend-endpoint and
+# src/lib.rs); this section adds only the backend-endpoint and
 # session-proxy-specific seam RuntimePlan does not yet own.
 
 # Backend endpoint (R3) — single configured Postgres backend this session-mode

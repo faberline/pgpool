@@ -1,4 +1,4 @@
-// SPEC-MANAGED: apps/pgpool/tech-design/logic/session-mode-proxy-with-auth-passthrough-and-serve-entrypoint.md#logic
+// SPEC-MANAGED: tech-design/logic/session-mode-proxy-with-auth-passthrough-and-serve-entrypoint.md#logic
 // <HANDWRITE gap="missing-generator:logic:pgpool-session-proxy" tracker="#1288" reason="Session-mode proxy needs generator primitives that do not exist yet.">
 //! Frame-level relay primitives shared by the session-mode proxy
 //! (`crate::proxy::session`) and the transaction-mode pool handler
@@ -278,7 +278,7 @@ pub(crate) async fn relay_until_ready(
     frontend_reader: &mut FrameReader,
     backend_reader: &mut FrameReader,
 ) -> Result<HandshakeOutcome, ProxyError> {
-    // @spec apps/pgpool/tech-design/logic/trust-startup-replay-for-capped-transaction-pooling.md#logic
+    // @spec tech-design/logic/trust-startup-replay-for-capped-transaction-pooling.md#logic
     // The replay is deliberately opt-in: any authentication frame requiring
     // a frontend response makes the whole handshake non-replayable. The
     // actual client receives its genuine protocol-ready frame sequence. The

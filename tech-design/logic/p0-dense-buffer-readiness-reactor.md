@@ -146,31 +146,31 @@ support for it.
 ```yaml
 coverage_kind: semantic
 changes:
-  - path: apps/pgpool/src/pool/reactor/state.rs
+  - path: src/pool/reactor/state.rs
     action: create
     section: logic
     impl_mode: hand-written
     anchor: ReactorState
     reason: Own dense client/backend phases, clean-idle and waiter FIFO queues, and reset-before-reuse transitions.
-  - path: apps/pgpool/src/pool/reactor/runtime.rs
+  - path: src/pool/reactor/runtime.rs
     action: create
     section: logic
     impl_mode: hand-written
     anchor: TransactionReactor
     reason: Own mio readiness, token slots, monotonic deadlines, reusable buffers, vectored output, optimistic flush, startup replay, and drain lifetimes.
-  - path: apps/pgpool/src/pool/transaction.rs
+  - path: src/pool/transaction.rs
     action: update
     section: logic
     impl_mode: hand-written
     anchor: TransactionHandler
     reason: Make the reactor the transaction-mode default while retaining an explicit legacy rollback.
-  - path: apps/pgpool/src/wire/reader.rs
+  - path: src/wire/reader.rs
     action: update
     section: logic
     impl_mode: hand-written
     anchor: FrameReader
     reason: Read a synchronous nonblocking socket directly into the bounded parser buffer.
-  - path: apps/pgpool/src/pool/backend_pool.rs
+  - path: src/pool/backend_pool.rs
     action: update
     section: logic
     impl_mode: hand-written
@@ -181,24 +181,24 @@ changes:
     section: logic
     impl_mode: hand-written
     reason: Retain handler-owned readiness resources through connection drain.
-  - path: apps/pgpool/tests/pool_modes.rs
+  - path: tests/pool_modes.rs
     action: update
     section: unit-test
     impl_mode: hand-written
     anchor: transaction_mode_reuses_backend_connections_across_sequential_transactions
     reason: Preserve backend reuse, contention, saturation, stats, and reset-isolation coverage on the default reactor, and prove failed backend connects release frontend capacity.
-  - path: apps/pgpool/tests/pgbouncer_benchmark.rs
+  - path: tests/pgbouncer_benchmark.rs
     action: update
     section: unit-test
     impl_mode: hand-written
     anchor: runner_is_syntax_valid_and_dry_run_is_hermetic
     reason: Pin the host-level serialization rule alongside the immutable counterbalanced profile contract.
-  - path: apps/pgpool/benchmarks/pgbouncer-transaction-pooling/README.md
+  - path: benchmarks/pgbouncer-transaction-pooling/README.md
     action: modify
     section: e2e-test
     impl_mode: hand-written
     reason: Document that a peer verdict requires the serialized, uncontended runner rather than overlapping host load.
-  - path: apps/pgpool/benchmarks/pgbouncer-transaction-pooling/run.sh
+  - path: benchmarks/pgbouncer-transaction-pooling/run.sh
     action: modify
     section: e2e-test
     impl_mode: hand-written
@@ -229,7 +229,7 @@ requirements:
     text: "On the unchanged 64-client, 16-backend, 30-second simple-protocol select-only ABBA profile, all clients complete without pgbench errors and both orders favor pgpool in at least three independent clean release runs."
     kind: performance
     risk: high
-    verify: apps/pgpool/benchmarks/pgbouncer-transaction-pooling/run.sh --workload select-only
+    verify: benchmarks/pgbouncer-transaction-pooling/run.sh --workload select-only
 ---
 flowchart TD
     r1[R1 reset isolation] --> pool_modes[pool_modes reset and contention tests]

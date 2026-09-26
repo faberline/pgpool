@@ -69,9 +69,9 @@ flowchart TD
 
 ### Artifact ownership
 
-- `apps/pgpool/benchmarks/pgbouncer-transaction-pooling/run.sh` is the hand-written real-service runner. It owns only benchmark process orchestration, profile output, pgbench report parsing, and cleanup; it must not contain pooler behaviour.
-- `apps/pgpool/benchmarks/pgbouncer-transaction-pooling/README.md` owns prerequisite/install commands, fairness constraints, profile explanation, and the explicit statement that P0 is advisory baseline evidence rather than a production ratchet.
-- `apps/pgpool/tests/pgbouncer_benchmark.rs` owns hermetic profile/syntax verification and the opt-in real-tool smoke. It never changes host configuration, fetches packages, or launches a live benchmark unless `PGPOOL_RUN_PGBOUNCER_BENCH=1` is explicitly set.
+- `benchmarks/pgbouncer-transaction-pooling/run.sh` is the hand-written real-service runner. It owns only benchmark process orchestration, profile output, pgbench report parsing, and cleanup; it must not contain pooler behaviour.
+- `benchmarks/pgbouncer-transaction-pooling/README.md` owns prerequisite/install commands, fairness constraints, profile explanation, and the explicit statement that P0 is advisory baseline evidence rather than a production ratchet.
+- `tests/pgbouncer_benchmark.rs` owns hermetic profile/syntax verification and the opt-in real-tool smoke. It never changes host configuration, fetches packages, or launches a live benchmark unless `PGPOOL_RUN_PGBOUNCER_BENCH=1` is explicitly set.
 
 ### Fairness invariants
 
@@ -130,17 +130,17 @@ flowchart TD
 ```yaml
 coverage_kind: semantic
 changes:
-  - path: apps/pgpool/benchmarks/pgbouncer-transaction-pooling/run.sh
+  - path: benchmarks/pgbouncer-transaction-pooling/run.sh
     action: create
     section: logic
     impl_mode: hand-written
     reason: Run an identical simple-protocol pgbench workload through PgBouncer and pgpool.
-  - path: apps/pgpool/benchmarks/pgbouncer-transaction-pooling/README.md
+  - path: benchmarks/pgbouncer-transaction-pooling/README.md
     action: create
     section: logic
     impl_mode: hand-written
     reason: Document the reproducible P0 benchmark profile and its prerequisites.
-  - path: apps/pgpool/tests/pgbouncer_benchmark.rs
+  - path: tests/pgbouncer_benchmark.rs
     action: create
     section: unit-test
     impl_mode: hand-written

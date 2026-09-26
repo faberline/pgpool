@@ -100,17 +100,17 @@ flowchart LR
 ```yaml
 coverage_kind: semantic
 changes:
-  - path: apps/pgpool/src/pool/backend_pool.rs
+  - path: src/pool/backend_pool.rs
     action: modify
     section: pgpool-reset-clean-direct-handoff
     impl_mode: hand-written
     reason: Directly deliver a reset-clean BackendLease to a live reusable waiter with cancellation-safe fallback to the existing idle/Notify path.
-  - path: apps/pgpool/tests/pool.rs
+  - path: tests/pool.rs
     action: modify
     section: pgpool-reset-clean-direct-handoff
     impl_mode: hand-written
     reason: Exercise direct handoff ownership and closed-waiter recovery with real local fake backend sockets.
-  - path: apps/pgpool/tests/pool_modes.rs
+  - path: tests/pool_modes.rs
     action: modify
     section: pgpool-reset-clean-direct-handoff
     impl_mode: hand-written
@@ -152,12 +152,12 @@ requirements:
     text: "The fixed peer benchmark remains the sole success measure; meter is diagnostic only and a first valid loss reverts production code."
     kind: integration
     risk: high
-    verify: apps/pgpool/benchmarks/pgbouncer-transaction-pooling/run.sh --pgpool-bin target/release/pgpool
+    verify: benchmarks/pgbouncer-transaction-pooling/run.sh --pgpool-bin target/release/pgpool
 ---
 flowchart TD
     r1[R1 exact direct lease] --> pool_reset_clean_backend_hands_directly_to_waiting_reusable_acquire[pool::reset_clean_backend_hands_directly_to_waiting_reusable_acquire]
     r2[R2 closed receiver] --> pool_cancelled_direct_handoff_waiter_passes_backend_to_next_waiter[pool::cancelled_direct_handoff_waiter_passes_backend_to_next_waiter]
     r3[R3 transaction semantics] --> pool_modes_transaction_mode_direct_handoff_preserves_reset_isolation_and_capacity[pool_modes::transaction_mode_direct_handoff_preserves_reset_isolation_and_capacity]
     r4[R4 legacy paths] --> cargo_test_p_pgpool_test_pool_test_pool_modes_test_trust_startup_replay[cargo test -p pgpool --test pool --test pool_modes --test trust_startup_replay]
-    r5[R5 unchanged benchmark] --> apps_pgpool_benchmarks_pgbouncer_transaction_pooling_run_sh_pgpool_bin_target_release_pgpool[apps/pgpool/benchmarks/pgbouncer-transaction-pooling/run.sh --pgpool-bin target/release/pgpool]
+    r5[R5 unchanged benchmark] --> apps_pgpool_benchmarks_pgbouncer_transaction_pooling_run_sh_pgpool_bin_target_release_pgpool[benchmarks/pgbouncer-transaction-pooling/run.sh --pgpool-bin target/release/pgpool]
 ```

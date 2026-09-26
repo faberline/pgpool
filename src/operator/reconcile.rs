@@ -1,4 +1,4 @@
-// SPEC-MANAGED: apps/pgpool/tech-design/semantic/pgpool-crd-operator-control-plane.md#logic
+// SPEC-MANAGED: tech-design/semantic/pgpool-crd-operator-control-plane.md#logic
 // <HANDWRITE gap="missing-generator:logic:8e369a2f" tracker="#1575" reason="Implement ManagedService readiness and status projection for Deployment replicas and expose the shared operator run loop.">
 use std::future::Future;
 

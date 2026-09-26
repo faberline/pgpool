@@ -1,9 +1,9 @@
-// SPEC-MANAGED: apps/pgpool/tech-design/logic/served-admin-plane-with-drain-aware-readiness.md#schema
+// SPEC-MANAGED: tech-design/logic/served-admin-plane-with-drain-aware-readiness.md#schema
 // <HANDWRITE gap="missing-generator:logic:pgpool-admin-plane" tracker="#1290" reason="Admin plane needs generator primitives that do not exist yet.">
 //! Wire-shape response bodies for `/pools`, `/pools/{pool}/stats`,
 //! `/readyz`, and `POST /drain` (TD Schema section). `PoolStatsResponse`/
 //! `PoolListResponse` are field-identical to the `PoolStats`/`PoolList`
-//! schemas `apps/pgpool/src/spec.rs`'s offline `schemas()` already
+//! schemas `src/spec.rs`'s offline `schemas()` already
 //! declares, so the served JSON and `pgpool spec --format openapi`'s
 //! component schemas stay byte-for-byte in sync (R4/AC3). Named
 //! `*Response` here (rather than reusing `PoolStats`/`PoolList` as Rust

@@ -89,24 +89,24 @@ flowchart TD
 
 ```yaml
 changes:
-  - path: apps/pgpool/Cargo.toml
+  - path: Cargo.toml
     action: modify
     impl_mode: hand-written
     section: logic
     description: Depend on the shared operator renderer crate.
-  - path: apps/pgpool/src/k8s/instance.rs
+  - path: src/k8s/instance.rs
     action: create
     impl_mode: hand-written
     section: logic
     anchor: render_manifests
     description: Compose common Service and Deployment primitives with the stateless Pgpool Pod contract.
-  - path: apps/pgpool/src/bin/pgpool.rs
+  - path: src/bin/pgpool.rs
     action: modify
     impl_mode: hand-written
     section: logic
     anchor: main
     description: Add pgpool k8s instance render profile and output handling.
-  - path: apps/pgpool/tests/cli_contract.rs
+  - path: tests/cli_contract.rs
     action: modify
     impl_mode: hand-written
     section: unit-test

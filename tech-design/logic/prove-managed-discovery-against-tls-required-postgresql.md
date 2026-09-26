@@ -38,7 +38,7 @@ The server certificate is self-signed for `localhost`, then copied out as the ex
 ```yaml
 coverage_kind: semantic
 changes:
-  - path: apps/pgpool/tests/connection_discovery.rs
+  - path: tests/connection_discovery.rs
     action: modify
     section: unit-test
     impl_mode: hand-written
@@ -63,10 +63,10 @@ requirements:
     text: "The Docker fixture enforces hostssl-only access and rejects a deliberately plaintext PostgreSQL client before running discovery."
     kind: integration
     risk: high
-    verify: apps/pgpool/tests/tls_required_discovery.sh
+    verify: tests/tls_required_discovery.sh
 ---
 flowchart TD
-    r1[R1 tls only fixture] --> apps_pgpool_tests_tls_required_discovery_sh[apps/pgpool/tests/tls_required_discovery.sh]
+    r1[R1 tls only fixture] --> apps_pgpool_tests_tls_required_discovery_sh[tests/tls_required_discovery.sh]
     r2[R2 managed tls query] --> connection_discovery_cloudsql_discovery_succeeds_against_tls_required_postgres[connection_discovery::cloudsql_discovery_succeeds_against_tls_required_postgres]
 ```
 
@@ -88,9 +88,9 @@ requirements:
     text: "The disposable PostgreSQL fixture accepts only hostssl connections and its proof script fails if an explicit plaintext client is accepted."
     kind: integration
     risk: high
-    verify: apps/pgpool/tests/tls_required_discovery.sh
+    verify: tests/tls_required_discovery.sh
 ---
 flowchart TD
-    r1[R1 plaintext rejected] --> apps_pgpool_tests_tls_required_discovery_sh[apps/pgpool/tests/tls_required_discovery.sh]
+    r1[R1 plaintext rejected] --> apps_pgpool_tests_tls_required_discovery_sh[tests/tls_required_discovery.sh]
     r2[R2 cloudsql tls discovery] --> connection_discovery_cloudsql_discovery_succeeds_against_tls_required_postgres[connection_discovery::cloudsql_discovery_succeeds_against_tls_required_postgres]
 ```

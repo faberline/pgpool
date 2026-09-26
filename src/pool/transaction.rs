@@ -1,4 +1,4 @@
-// SPEC-MANAGED: apps/pgpool/tech-design/logic/backend-pool-connection-reuse-and-transaction-session-pool-modes.md#logic
+// SPEC-MANAGED: tech-design/logic/backend-pool-connection-reuse-and-transaction-session-pool-modes.md#logic
 // <HANDWRITE gap="missing-generator:logic:pgpool-backend-pool" tracker="#1289" reason="Backend pool needs generator primitives that do not exist yet.">
 //! `TransactionHandler`: transaction-mode pooling per the TD Logic
 //! flowchart and Pool Lease State Machine — frontend admission, a one-time
@@ -71,7 +71,7 @@ enum TransactionEngine {
 }
 
 impl TransactionHandler {
-    // @spec apps/pgpool/tech-design/logic/p0-dense-buffer-readiness-reactor.md#logic
+    // @spec tech-design/logic/p0-dense-buffer-readiness-reactor.md#logic
     // <HANDWRITE gap="missing-generator:logic" tracker="#1891" reason="Log reserve policy with millisecond values matching the configuration surface.">
     pub fn new(config: TransactionProxyConfig) -> Self {
         if let Some(policy) = config.backend_pool.reserve_policy() {
@@ -179,7 +179,7 @@ async fn run_transaction_client(
     let (mut client_read, mut client_write) = client.into_split();
     let mut frontend_reader = FrameReader::new(Role::Frontend, &config.wire);
 
-    // @spec apps/pgpool/tech-design/logic/trust-startup-replay-for-capped-transaction-pooling.md#logic
+    // @spec tech-design/logic/trust-startup-replay-for-capped-transaction-pooling.md#logic
     // Decode startup before asking the pool for capacity. A matching,
     // challenge-free reply can therefore establish a frontend without taking
     // a physical backend from the capped pool.

@@ -40,12 +40,12 @@ flowchart TD
 
 ```yaml
 changes:
-  - path: apps/pgpool/src/pool/reactor/runtime.rs
+  - path: src/pool/reactor/runtime.rs
     action: modify
     section: logic
     impl_mode: hand-written
     anchor: read_client
-  - path: apps/pgpool/tests/trust_startup_replay.rs
+  - path: tests/trust_startup_replay.rs
     action: modify
     section: unit-test
     impl_mode: hand-written
@@ -88,12 +88,12 @@ flowchart TD
 
 ```yaml
 changes:
-  - path: apps/pgpool/src/pool/reactor/runtime.rs
+  - path: src/pool/reactor/runtime.rs
     action: modify
     section: logic
     impl_mode: hand-written
     anchor: read_client
-  - path: apps/pgpool/tests/trust_startup_replay.rs
+  - path: tests/trust_startup_replay.rs
     action: modify
     section: unit-test
     impl_mode: hand-written

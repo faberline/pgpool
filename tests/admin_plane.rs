@@ -1,10 +1,10 @@
-// SPEC-MANAGED: apps/pgpool/tech-design/logic/served-admin-plane-with-drain-aware-readiness.md#e2e-test
+// SPEC-MANAGED: tech-design/logic/served-admin-plane-with-drain-aware-readiness.md#e2e-test
 // <HANDWRITE gap="missing-generator:logic:pgpool-admin-plane" tracker="#1290" reason="Admin plane needs generator primitives that do not exist yet.">
 //! End-to-end coverage of the served admin HTTP plane (AC1-AC4), spawning
 //! the real `pgpool serve` binary rather than exercising `build_router` in
 //! isolation, per the TD E2E Test section. Follows the repo's "real
 //! services over mocks, skip gracefully" convention -- see
-//! `apps/pgpool/CLAUDE.md`/root `CLAUDE.md` Testing section -- and mirrors
+//! `CLAUDE.md`/root `CLAUDE.md` Testing section -- and mirrors
 //! `tests/session_proxy.rs`'s real-subprocess-spawn pattern.
 //!
 //! `BackendPool::new()` never eagerly connects (confirmed by reading

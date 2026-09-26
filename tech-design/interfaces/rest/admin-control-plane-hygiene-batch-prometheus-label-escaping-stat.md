@@ -48,37 +48,37 @@ changes:
     impl_mode: hand-written
     anchor: render_labeled
     reason: Expose the shared Prometheus label-value escaping primitive for custom metric families.
-  - path: apps/pgpool/src/k8s/control.rs
+  - path: src/k8s/control.rs
     action: modify
     section: logic
     impl_mode: hand-written
     anchor: prometheus
     reason: Escape endpoint and Pod labels and reap Pod-owned reserve grants on completed drain.
-  - path: apps/pgpool/src/k8s/reserve.rs
+  - path: src/k8s/reserve.rs
     action: modify
     section: logic
     impl_mode: hand-written
     anchor: release_after_close
     reason: Add endpoint-ledger per-Pod reserve grant reaping after physical drain completion.
-  - path: apps/pgpool/src/k8s/budget.rs
+  - path: src/k8s/budget.rs
     action: modify
     section: logic
     impl_mode: hand-written
     anchor: reserve_many
     reason: Reject duplicate Pod identities within one static admission batch before state mutation.
-  - path: apps/pgpool/src/admin/metrics.rs
+  - path: src/admin/metrics.rs
     action: modify
     section: logic
     impl_mode: hand-written
     anchor: render
     reason: Capture one BackendPool stats snapshot per pool per Prometheus render.
-  - path: apps/pgpool/src/admin/handlers.rs
+  - path: src/admin/handlers.rs
     action: modify
     section: logic
     impl_mode: hand-written
     anchor: docs
     reason: Replace remote Swagger CDN assets with a self-contained offline documentation page.
-  - path: apps/pgpool/src/admin/router.rs
+  - path: src/admin/router.rs
     action: modify
     section: unit-test
     impl_mode: hand-written

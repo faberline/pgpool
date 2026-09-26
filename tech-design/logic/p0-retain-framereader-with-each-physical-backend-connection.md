@@ -36,23 +36,23 @@ flowchart LR
 
 ```yaml
 changes:
-  - path: apps/pgpool/src/pool/backend_pool.rs
+  - path: src/pool/backend_pool.rs
     action: modify
     section: pgpool-physical-backend-reader-contract
     impl_mode: hand-written
-  - path: apps/pgpool/src/pool/transaction.rs
+  - path: src/pool/transaction.rs
     action: modify
     section: pgpool-physical-backend-reader-contract
     impl_mode: hand-written
-  - path: apps/pgpool/src/proxy/session.rs
+  - path: src/proxy/session.rs
     action: modify
     section: pgpool-physical-backend-reader-contract
     impl_mode: hand-written
-  - path: apps/pgpool/tests/pool.rs
+  - path: tests/pool.rs
     action: modify
     section: pgpool-physical-backend-reader-contract
     impl_mode: hand-written
-  - path: apps/pgpool/tests/pool_modes.rs
+  - path: tests/pool_modes.rs
     action: modify
     section: pgpool-physical-backend-reader-contract
     impl_mode: hand-written

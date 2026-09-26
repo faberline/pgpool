@@ -30,16 +30,16 @@ flowchart TD
 
 ```yaml
 changes:
-  - path: apps/pgpool/Cargo.toml
+  - path: Cargo.toml
     action: modify
     section: logic
     impl_mode: hand-written
-  - path: apps/pgpool/src/platform/discovery.rs
+  - path: src/platform/discovery.rs
     action: modify
     section: logic
     impl_mode: hand-written
     anchor: discover_connection_facts
-  - path: apps/pgpool/tests/connection_discovery.rs
+  - path: tests/connection_discovery.rs
     action: modify
     section: unit-test
     impl_mode: hand-written
@@ -68,16 +68,16 @@ flowchart TD
 
 ```yaml
 changes:
-  - path: apps/pgpool/Cargo.toml
+  - path: Cargo.toml
     action: modify
     section: logic
     impl_mode: hand-written
-  - path: apps/pgpool/src/platform/discovery.rs
+  - path: src/platform/discovery.rs
     action: modify
     section: logic
     impl_mode: hand-written
     anchor: discover_connection_facts
-  - path: apps/pgpool/tests/connection_discovery.rs
+  - path: tests/connection_discovery.rs
     action: modify
     section: unit-test
     impl_mode: hand-written

@@ -1,4 +1,4 @@
-// SPEC-MANAGED: apps/pgpool/tech-design/semantic/pgpool-crd-operator-control-plane.md#unit-test
+// SPEC-MANAGED: tech-design/semantic/pgpool-crd-operator-control-plane.md#unit-test
 // <HANDWRITE gap="missing-generator:unit-test:4dbe8f81" tracker="#1575" reason="Verify CRD schema, stateless owned rendering, ManagedService readiness, and rich control-plane status projection.">
 use std::collections::HashMap;
 

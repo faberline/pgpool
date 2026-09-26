@@ -45,7 +45,7 @@ Backend DNS is resolved once by `TransactionReactor::start` before its dedicated
 ```yaml
 coverage_kind: semantic
 changes:
-  - path: apps/pgpool/src/pool/reactor/runtime.rs
+  - path: src/pool/reactor/runtime.rs
     action: modify
     section: logic
     impl_mode: hand-written

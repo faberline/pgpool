@@ -1,4 +1,4 @@
-// SPEC-MANAGED: apps/pgpool/tech-design/semantic/pgpool-crd-operator-control-plane.md#logic
+// SPEC-MANAGED: tech-design/semantic/pgpool-crd-operator-control-plane.md#logic
 // <HANDWRITE gap="missing-generator:logic:133c6ad7" tracker="#1575" reason="Purely render a Pgpool CR through the shared stateless Deployment/common Service modules and attach owner references.">
 use kube::ResourceExt;
 use serde_json::Value;

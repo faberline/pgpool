@@ -1,10 +1,10 @@
-// SPEC-MANAGED: apps/pgpool/tech-design/logic/backend-pool-connection-reuse-and-transaction-session-pool-modes.md#unit-test
+// SPEC-MANAGED: tech-design/logic/backend-pool-connection-reuse-and-transaction-session-pool-modes.md#unit-test
 // <HANDWRITE gap="missing-generator:logic:pgpool-backend-pool" tracker="#1289" reason="Backend pool needs generator primitives that do not exist yet.">
 //! End-to-end coverage of transaction-mode backend pooling against a real
 //! local Postgres (AC1-AC5). Every test here graceful-skips (prints why,
 //! then returns) when the environment's Postgres isn't reachable, per the
 //! repo's "real services over mocks, skip gracefully" testing convention --
-//! see `apps/pgpool/CLAUDE.md`/root `CLAUDE.md` Testing section. Mirrors
+//! see `CLAUDE.md`/root `CLAUDE.md` Testing section. Mirrors
 //! `tests/session_proxy.rs`'s real-Postgres discovery/helper pattern
 //! (`real_backend_ready`, `backend_user`, `proxy_dsn`, `simple_query_i32`).
 //!

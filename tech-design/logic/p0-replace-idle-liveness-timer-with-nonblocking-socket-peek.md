@@ -47,17 +47,17 @@ The implementation uses the safe `socket2::SockRef` facade over the Tokio stream
 ```yaml
 coverage_kind: semantic
 changes:
-  - path: apps/pgpool/Cargo.toml
+  - path: Cargo.toml
     action: modify
     section: pgpool-nonblocking-idle-liveness-peek-contract
     impl_mode: hand-written
     reason: Make the safe socket descriptor facade an explicit direct dependency.
-  - path: apps/pgpool/src/pool/backend_pool.rs
+  - path: src/pool/backend_pool.rs
     action: modify
     section: pgpool-nonblocking-idle-liveness-peek-contract
     impl_mode: hand-written
     reason: Classify `MSG_PEEK` results into live, EOF, and error outcomes without a Tokio timer.
-  - path: apps/pgpool/tests/pool.rs
+  - path: tests/pool.rs
     action: modify
     section: pgpool-nonblocking-idle-liveness-peek-contract
     impl_mode: hand-written

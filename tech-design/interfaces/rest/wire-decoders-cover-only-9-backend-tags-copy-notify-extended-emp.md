@@ -31,7 +31,7 @@ flowchart TD
 
 ```yaml
 changes:
-  - path: apps/pgpool/Cargo.toml
+  - path: Cargo.toml
     action: modify
     section: unit-test
     impl_mode: hand-written
@@ -39,31 +39,31 @@ changes:
     action: modify
     section: unit-test
     impl_mode: hand-written
-  - path: apps/pgpool/src/wire/backend.rs
+  - path: src/wire/backend.rs
     action: modify
     section: logic
     impl_mode: hand-written
     anchor: decode
-  - path: apps/pgpool/src/wire/frontend.rs
+  - path: src/wire/frontend.rs
     action: modify
     section: logic
     impl_mode: hand-written
     anchor: decode
-  - path: apps/pgpool/src/wire/mod.rs
+  - path: src/wire/mod.rs
     action: modify
     section: logic
     impl_mode: hand-written
-  - path: apps/pgpool/src/wire/reader.rs
+  - path: src/wire/reader.rs
     action: modify
     section: logic
     impl_mode: hand-written
     anchor: validate_backend_relay
-  - path: apps/pgpool/tests/wire_codec.rs
+  - path: tests/wire_codec.rs
     action: modify
     section: unit-test
     impl_mode: hand-written
     anchor: frontend_extended_query_round_trip
-  - path: apps/pgpool/tests/session_proxy.rs
+  - path: tests/session_proxy.rs
     action: modify
     section: unit-test
     impl_mode: hand-written
@@ -106,27 +106,27 @@ flowchart TD
 
 ```yaml
 changes:
-  - path: apps/pgpool/src/wire/backend.rs
+  - path: src/wire/backend.rs
     action: modify
     section: logic
     impl_mode: hand-written
     anchor: decode
-  - path: apps/pgpool/src/wire/frontend.rs
+  - path: src/wire/frontend.rs
     action: modify
     section: logic
     impl_mode: hand-written
     anchor: decode
-  - path: apps/pgpool/src/wire/reader.rs
+  - path: src/wire/reader.rs
     action: modify
     section: logic
     impl_mode: hand-written
     anchor: validate_backend_relay
-  - path: apps/pgpool/tests/wire_codec.rs
+  - path: tests/wire_codec.rs
     action: modify
     section: unit-test
     impl_mode: hand-written
     anchor: frontend_extended_query_round_trip
-  - path: apps/pgpool/tests/session_proxy.rs
+  - path: tests/session_proxy.rs
     action: modify
     section: unit-test
     impl_mode: hand-written

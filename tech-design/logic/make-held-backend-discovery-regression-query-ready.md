@@ -34,7 +34,7 @@ The query-ready step is deliberately before the polling loop. If startup/auth ca
 ```yaml
 coverage_kind: semantic
 changes:
-  - path: apps/pgpool/tests/connection_discovery.rs
+  - path: tests/connection_discovery.rs
     action: modify
     section: unit-test
     impl_mode: hand-written

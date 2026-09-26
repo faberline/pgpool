@@ -1,4 +1,4 @@
-// SPEC-MANAGED: apps/pgpool/tech-design/semantic/source/apps-pgpool-src-spec-rs.md#schema
+// SPEC-MANAGED: tech-design/semantic/source/apps-pgpool-src-spec-rs.md#schema
 // <HANDWRITE gap="missing-generator:logic:pgpool-bootstrap" tracker="#pgpool-bootstrap" reason="Initial offline route/spec/LLM contract before generated OpenAPI artifacts.">
 use serde_json::{json, Value};
 
@@ -45,7 +45,7 @@ pub const fn llm_workflow_md() -> &'static str {
     r#"# pgpool workflow
 
 `pgpool` is a working app id, not the final product name. It is the initial
-Kubernetes-native PostgreSQL pooler surface in `apps/pgpool`.
+Kubernetes-native PostgreSQL pooler surface in `pgpool`.
 
 Start with:
 

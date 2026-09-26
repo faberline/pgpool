@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
-# SPEC-MANAGED: apps/pgpool/tech-design/logic/prove-managed-discovery-against-tls-required-postgresql.md#unit-test
+# SPEC-MANAGED: tech-design/logic/prove-managed-discovery-against-tls-required-postgresql.md#unit-test
 # HANDWRITE-BEGIN gap="missing-generator:unit-test" tracker="#1924" reason="Docker-backed PostgreSQL TLS fixture setup and cleanup require host shell orchestration."
 set -eu
 

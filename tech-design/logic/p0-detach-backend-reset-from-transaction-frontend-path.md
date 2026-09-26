@@ -50,19 +50,19 @@ A spawn-owned reset converts every `reset_connection` error/EOF/timeout into str
 
 ```yaml
 changes:
-  - path: apps/pgpool/src/pool/backend_pool.rs
+  - path: src/pool/backend_pool.rs
     action: modify
     section: pgpool-detached-reset
     impl_mode: hand-written
-  - path: apps/pgpool/src/pool/transaction.rs
+  - path: src/pool/transaction.rs
     action: modify
     section: pgpool-detached-reset
     impl_mode: hand-written
-  - path: apps/pgpool/tests/pool.rs
+  - path: tests/pool.rs
     action: modify
     section: pgpool-detached-reset
     impl_mode: hand-written
-  - path: apps/pgpool/tests/pool_modes.rs
+  - path: tests/pool_modes.rs
     action: modify
     section: pgpool-detached-reset
     impl_mode: hand-written
@@ -85,7 +85,7 @@ requirements:
     text: "Transaction mode preserves reset isolation, cap, and no client errors in the immutable benchmark."
     kind: e2e
     risk: high
-    verify: apps/pgpool/benchmarks/pgbouncer-transaction-pooling/run.sh
+    verify: benchmarks/pgbouncer-transaction-pooling/run.sh
   frontend_progress:
     id: R1
     text: "Returning a transaction backend schedules its reset and returns before a deliberately delayed DISCARD ALL response, so the frontend path is not reset-bound."
@@ -96,5 +96,5 @@ requirements:
 flowchart TD
     r1[R1 frontend progress] --> cargo_test_p_pgpool_test_pool_detached_reset_returns_before_backend_reset_completes[cargo test -p pgpool --test pool detached_reset_returns_before_backend_reset_completes]
     r2[R2 capacity isolation] --> cargo_test_p_pgpool_test_pool_test_pool_modes[cargo test -p pgpool --test pool --test pool_modes]
-    r3[R3 end to end] --> apps_pgpool_benchmarks_pgbouncer_transaction_pooling_run_sh[apps/pgpool/benchmarks/pgbouncer-transaction-pooling/run.sh]
+    r3[R3 end to end] --> apps_pgpool_benchmarks_pgbouncer_transaction_pooling_run_sh[benchmarks/pgbouncer-transaction-pooling/run.sh]
 ```

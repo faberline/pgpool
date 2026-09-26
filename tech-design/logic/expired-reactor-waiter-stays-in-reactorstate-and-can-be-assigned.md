@@ -40,12 +40,12 @@ flowchart TD
 
 ```yaml
 changes:
-  - path: apps/pgpool/src/pool/reactor/runtime.rs
+  - path: src/pool/reactor/runtime.rs
     action: modify
     section: logic
     impl_mode: hand-written
     anchor: expire_waiters
-  - path: apps/pgpool/src/pool/reactor/state.rs
+  - path: src/pool/reactor/state.rs
     action: modify
     section: unit-test
     impl_mode: hand-written
@@ -81,12 +81,12 @@ flowchart TD
 
 ```yaml
 changes:
-  - path: apps/pgpool/src/pool/reactor/runtime.rs
+  - path: src/pool/reactor/runtime.rs
     action: modify
     section: logic
     impl_mode: hand-written
     anchor: expire_waiters
-  - path: apps/pgpool/src/pool/reactor/state.rs
+  - path: src/pool/reactor/state.rs
     action: modify
     section: unit-test
     impl_mode: hand-written
