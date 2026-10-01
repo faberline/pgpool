@@ -1,3 +1,4 @@
+//! isolation: changes PGPOOL_TRANSACTION_ENGINE
 //! Regression coverage for transaction pooling's explicit extended-protocol
 //! stopgap. It uses a real local Postgres for startup/auth and skips when that
 //! service is unavailable, matching the app's integration-test convention.

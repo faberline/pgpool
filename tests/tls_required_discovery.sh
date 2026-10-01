@@ -73,6 +73,6 @@ fi
 cd "$root"
 PGPOOL_TLS_DISCOVERY_PORT="$port" \
 PGPOOL_TLS_DISCOVERY_CA="$scratch/ca.pem" \
-cargo test -p pgpool --test connection_discovery \
-    cloudsql_discovery_succeeds_against_tls_required_postgres -- --exact
+cargo test -p pgpool --test it \
+    connection_discovery::cloudsql_discovery_succeeds_against_tls_required_postgres -- --exact
 # HANDWRITE-END
