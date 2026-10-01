@@ -2,383 +2,257 @@
 
 ## Brief
 
-`pgpool` is the working app id for Axiom's Kubernetes-native PostgreSQL
-connection pooler. The final product name is not settled yet; until then the
-repository path, crate name, binary name, and tracker label use `pgpool` as a
-stable implementation placeholder.
+`pgpool` is the working name for Axiom's Kubernetes PostgreSQL connection pooler.
+It owns frontend admission, backend budgets, pool reuse, drain, and the admin HTTP surface.
+Cloud SQL, AlloyDB, and other provider connectors stay explicit adapters above the core runtime.
 
-The app owns the database-pooling data plane: frontend PostgreSQL TCP
-admission, backend connection budgeting, drain-aware shutdown, pool health, and
-standard operational HTTP endpoints. Cloud SQL, AlloyDB, and other platform
-connectors stay explicit adapters above this core rather than being baked into
-the pooler runtime.
+## Primary workflow
 
-Current implementation slice: `pgpool` is a Rust workspace crate and
-binary with PostgreSQL wire handling, bounded session/transaction pooling, a
-single-owner dense-buffer readiness reactor for the transaction data plane, a
-served admin plane, live remote-PostgreSQL capacity discovery, global endpoint
-quota/drain models, and layered Pgpool CRD/operator/instance artifacts. Shared
-runtime dependencies remain wired through `server-lifecycle`, `server-tcp`,
-`server-http`, `metrics-prometheus`, and `service-k8s`; provider authentication
-and broader external EC gates remain separate work roots.
+1. Build the local binary with `cargo build --locked --bin pgpool`.
+2. Read `target/debug/pgpool runtime-plan` and `target/debug/pgpool spec --format routes`.
+3. Run `target/debug/pgpool serve --backend-host 127.0.0.1 --backend-port 5432` for a local PostgreSQL backend.
+4. Connect clients to the PostgreSQL frontend and inspect the admin routes.
+5. Inspect `target/debug/pgpool k8s crd render`, `target/debug/pgpool k8s operator render`, and `target/debug/pgpool k8s instance render`.
 
-## Boundaries
+The current CLI requires an explicit command.
+`serve` starts the data and admin planes.
+The old serve-by-default outcome remains in [ROADMAP.md](ROADMAP.md#default-serve-entrypoint).
 
-- `pgpool` owns Postgres-compatible pooling and proxy admission.
-- `server-lifecycle`, `server-tcp`, and `server-http` own generic server runtime
-  mechanics; `pgpool` composes them instead of duplicating accept loops,
-  connection budgets, h2c serving, drain, or tracing.
-- Platform adapters such as Cloud SQL Proxy or AlloyDB endpoint discovery stay
-  optional integration layers, not required runtime dependencies.
-- Application services should connect to `pgpool` over the PostgreSQL wire
-  protocol and inspect operations through the admin HTTP surface.
+## PostgreSQL pooling
+
+The runtime supports bounded session and transaction pooling.
+Session mode holds a backend for a client session.
+Transaction mode returns a backend after the transaction and reset steps.
+The transaction reactor uses one owner for socket state and buffers.
+Transaction mode rejects the extended query protocol with the existing `0A000` error.
+
+The pooler is stateless.
+PostgreSQL owns durable database data.
+The operator combines discovered and configured endpoint limits before quota admission.
+The pooler drains before its endpoint quota is released.
+
+Provider adapters supply endpoints and authentication material.
+The runtime does not require a provider SDK.
+Managed discovery TLS covers the discovery connection.
+Full relay TLS and admin authorization evidence remain open.
+
+## Source and package boundaries
+
+This repository has one root Rust package.
+It has a library and one `pgpool` binary.
+It has no explicit Cargo workspace table or `crates/` tree.
+The existing `--workspace` gate flag still selects this package.
+
+[ddd.toml](ddd.toml) declares one `pgpool` context.
+A context is one product boundary with its own model and operations.
+Code lives in `domain`, `application`, `infrastructure`, and `interfaces` layers.
+[src/app](src/app.rs) assembles the process.
+[src/api](src/api.rs) preserves the public module names.
+
+Core git dependencies remain pinned to `v0.4.14`.
+This layout does not adopt Core main P2 APIs.
+Current Rust files define the implementation.
+Old `SPEC-MANAGED`, `HANDWRITE`, and [tech-design](tech-design) records remain historical.
+
+## Contract discovery
+
+| Fact | Current source | Discovery |
+|---|---|---|
+| CLI commands and flags | [app/cli.rs](src/app/cli.rs) | `pgpool --help` and `pgpool llm --topic workflow` |
+| Runtime defaults | [application/runtime_plan.rs](src/application/runtime_plan.rs) | `pgpool runtime-plan` |
+| Offline routes and schema | [interfaces/spec.rs](src/interfaces/spec.rs) | `pgpool spec --format routes` and `pgpool spec --format openapi` |
+| Served admin contract | [interfaces/admin/router.rs](src/interfaces/admin/router.rs) | `/openapi.json` and `/docs` |
+| Kubernetes assets | [interfaces/operator](src/interfaces/operator.rs) and [application/k8s](src/application/k8s.rs) | `pgpool k8s crd render`, `pgpool k8s operator render`, and `pgpool k8s instance render` |
+| Current support | [STATUS.md](STATUS.md) | Support matrix |
+| Required local checks | [CONTRIBUTING.md](CONTRIBUTING.md) | Full feature matrix and isolated targets |
 
 ## Capabilities
 
-A promise with no gate under it is not claimed.
+The 15 names below keep the existing product contract.
+The listed gates check current local code.
+A local pass does not complete an open external, production, or release boundary.
+[STATUS.md](STATUS.md) states the supported scope.
+[ROADMAP.md](ROADMAP.md) keeps the open outcomes.
+The source label `external:pgpool` names this standalone repository.
 
-The baseline capabilities selected by aw.toml's `service` umbrella profile
-(plus `cli_facing`, `competitive_replacement`, `kubernetes_native`,
-`long_running`, and `network_exposed`) are mandatory for this pooler class.
-They do not replace pgpool's product capabilities; the PostgreSQL pooler core
-and the platform adapter boundary remain first-class domain roots.
+### Capability index
 
-### Capability Index
-
-| Capability | Root WI | Notes |
-|---|---:|---|
-| Working-Name App Scaffold | - | crate/bin/README/AW metadata and route inventory are present under `pgpool` |
-| Shared Server Substrate Adoption | - | runtime plan composes `server-lifecycle`, `server-tcp`, and `server-http` types |
-| PostgreSQL Pooler Core | 1282 | domain: frontend pg wire parser, backend pool, transaction/session modes |
-| Platform Adapter Boundary | 1283 | live PostgreSQL capacity discovery is provider/role typed; provider auth remains outside core runtime |
-| CLI Interface | 1282 | mandatory baseline: single `pgpool` bin with runtime-plan/spec verbs; serve entrypoint remains open |
-| CLI Standard Surface | - | mandatory baseline: shared `cli-std` llm/upgrade/issue surface with build-stamp provenance |
-| Chainable Output Conformance | - | mandatory baseline: `runtime-plan` emits `next:`; raw spec streams stay unwrapped |
-| Competitor Feature Parity | 1285 | mandatory baseline: PgBouncer/Odyssey/pgcat transaction-pooling replacement breadth |
-| Competitor Performance | 1285 | fixed local ABBA harness has six eligible pgpool wins vs PgBouncer (#1753); vat-isolated ratchet remains open |
-| EC Gates Configured | 1285 | mandatory baseline: aw.toml EC inventory, vat meter/guard runners, external-contracts evidence |
-| HTTP/2 API List | 1282 | mandatory baseline: offline `pgpool spec` admin route inventory; served contract remains open |
-| Kubernetes-Native Deployment | 1284 | PgpoolSpec CRD/operator/instance render, shared Deployment composition, quota admission, and drain behavior are covered; image artifact work remains |
-| Long-Running Stability | 1282 | mandatory baseline: backend reuse without leaks, graceful drain, restart safety |
-| Security Hardening | 1286 | mandatory baseline: frontend auth passthrough, TLS posture, admin-plane exposure gates |
-| Standard Operational Endpoints | 1282 | mandatory baseline: one-port `/healthz`, `/readyz`, `/metrics`, `/openapi.json`, `/docs`; offline twin exists |
+| Capability | ID | User promise | Sources |
+|---|---|---|---|
+| Working-Name App Scaffold | `working-name-app-scaffold` | Keep one stable package and process name while the product name is open. | `external:pgpool` |
+| Shared Server Substrate Adoption | `shared-server-substrate-adoption` | Use the shared libraries for TCP, HTTP, budgets, and drain. | `external:pgpool` |
+| PostgreSQL Pooler Core | `postgresql-pooler-core` | Bound connections and reuse backends by pool mode. | `external:pgpool` |
+| Platform Adapter Boundary | `platform-adapter-boundary` | Keep provider endpoints and authentication outside the pooler core. | `external:pgpool` |
+| CLI Interface | `cli-interface` | Expose one binary with serve and offline plan, spec, and render commands. | `external:pgpool` |
+| CLI Standard Surface | `cli-standard-surface` | Ship llm, upgrade, and issue commands with build data. | `external:pgpool` |
+| Chainable Output Conformance | `chainable-output-conformance` | Keep raw artifacts usable and give operational output its next command. | `external:pgpool` |
+| Competitor Feature Parity | `competitor-feature-parity` | Cover the functions needed for PgBouncer, Odyssey, and pgcat replacement. | `external:pgpool` |
+| Competitor Performance | `competitor-performance` | Bind throughput and latency claims to a repeatable isolated comparison. | `external:pgpool` |
+| EC Gates Configured | `ec-gates-configured` | Keep meter and guard evidence contracts explicit and runnable. | `external:pgpool` |
+| HTTP/2 API List | `http2-api-list` | Publish the admin route list with matching served and offline specs. | `external:pgpool` |
+| Kubernetes-Native Deployment | `kubernetes-native-deployment` | Render layered assets and keep quota and drain decisions explicit. | `external:pgpool` |
+| Long-Running Stability | `long-running-stability` | Keep capacity and pool state safe through drain, restart, and long runs. | `external:pgpool` |
+| Security Hardening | `security-hardening` | Protect auth, wire handling, TLS posture, and admin exposure. | `external:pgpool` |
+| Standard Operational Endpoints | `standard-operational-endpoints` | Serve probes, metrics, live spec, and docs on one admin port. | `external:pgpool` |
 
 ### Working-Name App Scaffold
 
-Hold `pgpool` as a stable working app id — crate, binary, README capability
-map, and AW metadata live under `pgpool` — so pooler work roots can land
-before the final product name is settled, without renaming churn.
+- ID: `working-name-app-scaffold`
+- Promise: Keep `pgpool` as the package, binary, repository, and project name until the final name is set.
+- Sources:
+  - `external:pgpool` holds the root [package](Cargo.toml), the thin [binary entry](src/bin/pgpool/main.rs), and the project record in [aw.toml](aw.toml).
+- Gate: `cargo test --locked -p pgpool --all-features`
 
-- Root WI: none; this capability predates the tracker.
-- Surfaces: CLI: `pgpool runtime-plan` - offline shared-runtime plan for the
-  data and admin planes.; Config: `aw.toml` - project registration,
-  capability profile traits, and workspace test gate.
-- Gate — behavior: `cargo test -p pgpool --test cli_contract` - compiled-binary
-  contract for the scaffold surface
-- Source: `tests/cli_contract.rs`, `aw.toml`,
-  `src/bin/pgpool.rs`
-- Evidence: tests/cli_contract.rs
+The package is a single root Rust package. The offline runtime plan and route inventory remain available. The working name is not a final product naming decision.
 
 ### Shared Server Substrate Adoption
 
-`pgpool` starts from the shared service substrate instead of inventing a local
-accept loop or HTTP admin server. The TCP data-plane listener uses `server-tcp`
-concepts, the admin listener uses `server-http`/h2c concepts, and connection
-limits/readiness/drain are represented by `server-lifecycle`.
+- ID: `shared-server-substrate-adoption`
+- Promise: Use the shared TCP and HTTP server libraries. Use the shared lifecycle types for admission, readiness, and drain.
+- Sources:
+  - `external:pgpool` composes server-lifecycle, server-tcp, and server-http options in the [runtime plan](src/application/runtime_plan.rs) and connects them in [serve](src/app/serve.rs).
+- Gate: `cargo test --locked -p pgpool --all-features`
 
-- Root WI: none; this capability predates the tracker.
-- Surfaces: Rust API: `RuntimePlan` - composes `server-lifecycle`
-  bind/budget/drain, `server-tcp` socket options, and `server-http` h2c
-  options.; CLI: `pgpool runtime-plan` - JSON plan naming the shared libs.
-- Gate — behavior: `cargo test -p pgpool` - runtime plan composes shared
-  substrate types instead of local reinventions
-- Source: `src/lib.rs`, `tests/cli_contract.rs`
-- Evidence: src/lib.rs
+The data and admin planes share their configured budget and drain state. The admin plane supports HTTP/1.1 and h2c. h2c means HTTP/2 without TLS. Core dependencies stay at `v0.4.14`.
 
 ### PostgreSQL Pooler Core
 
-Provide a high-throughput PostgreSQL pooler with bounded frontend admission,
-backend connection reuse, transaction/session pool modes, graceful drain, and
-clear observability before platform-specific adapters are added.
+- ID: `postgresql-pooler-core`
+- Promise: Provide PostgreSQL wire admission and bounded backend reuse. Support session and transaction pooling. Provide graceful drain and pool measurements.
+- Sources:
+  - `external:pgpool` implements reuse in [application/pool](src/application/pool.rs), wire frames in [application/wire](src/application/wire.rs), and the [pool edge](src/interfaces/pool.rs).
+- Gate: `cargo test --locked -p pgpool --all-features`
 
-- Root WI: #1282
-- Surfaces: TCP: `0.0.0.0:6432` - PostgreSQL wire protocol frontend admission
-  for application clients.; Rust API: `RuntimePlan` - pool mode, frontend
-  budget, and backend budget configuration.
-- Gate — behavior: pending pg wire parser and pool lifecycle conformance gates
-  - startup/auth passthrough, transaction/session pooling, drain
-- Gate: tests/wire_codec.rs
-  (`cargo test -p pgpool --test wire_codec`)
-- Gate: tests/session_proxy.rs
-  (`cargo test -p pgpool --test proxy --test session_proxy`)
-- Gate: tests/pool_modes.rs
-  (`cargo test -p pgpool --test pool --test pool_modes`)
-- Source: `tests/proxy.rs`, `tests/pool.rs`
-
-| Work Root | Kind | WI | Gate / Evidence |
-|---|---|---:|---|
-| pg-wire-frontend-protocol | epic | 1287 | tests/wire_codec.rs; tech-design/logic/pg-wire-message-codec-frontend-backend-frames.md |
-| backend-pool-and-reuse | epic | 1289 | tests/pool.rs; tests/pool_modes.rs; tech-design/logic/backend-pool-connection-reuse-and-transaction-session-pool-modes.md |
-| transaction-session-pool-modes | epic | 1289 | tests/pool.rs; tests/pool_modes.rs; tech-design/logic/backend-pool-connection-reuse-and-transaction-session-pool-modes.md |
-| transaction-readiness-reactor | change | 1753 | tech-design/logic/p0-dense-buffer-readiness-reactor.md; tests/pool_modes.rs; benchmarks/pgbouncer-transaction-pooling/run.sh |
-| serve-entrypoint-and-drain | epic | 1288 | tests/proxy.rs; tests/session_proxy.rs; tech-design/logic/session-mode-proxy-with-auth-passthrough-and-serve-entrypoint.md |
+The default frontend bind is `0.0.0.0:6432`. Session mode holds a backend for one client session. Transaction mode reuses a backend after the transaction and reset steps. Transaction mode rejects the extended query protocol with the existing `0A000` error. Full replacement breadth remains open.
 
 ### Platform Adapter Boundary
 
-Keep Cloud SQL Proxy, AlloyDB endpoint discovery, and other platform connectors
-as explicit adapters above the pooler core: the core runtime never embeds
-platform SDKs, and adapters only supply backend endpoints and auth material
-through a stable seam.
+- ID: `platform-adapter-boundary`
+- Promise: Keep Cloud SQL, AlloyDB, and plain PostgreSQL adapters explicit. Let adapters supply endpoints and authentication material through the existing seam. Keep provider SDKs outside the core runtime.
+- Sources:
+  - `external:pgpool` defines [endpoint and capacity values](src/domain/platform.rs), connects through [live discovery](src/infrastructure/platform/discovery.rs), and checks [discovery behavior](tests/it/connection_discovery.rs).
+- Gate: `cargo test --locked -p pgpool --all-features`
 
-- Root WI: #1283
-- Surfaces: Rust API: backend endpoint/auth adapter seam - Cloud SQL, AlloyDB,
-  and plain-Postgres backends supply endpoints and auth material above the core
-  runtime.
-- Gate — behavior: pending adapter seam conformance gates - core runtime stays
-  adapter-free
-- Gate: adapters compose from outside
-- Source:
-  `tests/connection_discovery.rs - live PostgreSQL runtime discovery integration gate`,
-  `src/platform/discovery.rs - provider/role typed adapter seam and runtime-lower-bound logic`
-
-| Work Root | Kind | WI | Gate / Evidence |
-|---|---|---:|---|
-| backend-adapter-seam | epic | 1283 | pending: adapter seam contract tests |
-| runtime-connection-limit-discovery | change | 1570 | tests/connection_discovery.rs; src/platform/discovery.rs; tech-design/semantic/pgpool-runtime-connection-limit-discovery.md |
+Discovery uses provider and endpoint role values. It combines runtime limits with advisory limits. Managed-provider discovery can use configured TLS trust material. Provider authentication and full adapter conformance remain open. Discovery TLS covers the discovery connection.
 
 ### CLI Interface
 
-Expose pgpool as one runnable binary with a stable process entrypoint — serve
-by default once the pooler core lands — plus offline runtime-plan and spec
-verbs for agents and operators.
+- ID: `cli-interface`
+- Promise: Provide one runnable `pgpool` binary. Keep the process entry and offline runtime-plan and spec commands stable.
+- Sources:
+  - `external:pgpool` declares [CLI commands](src/app/cli.rs), routes [commands](src/app/commands.rs), and checks the built binary in [CLI tests](tests/it/cli_contract.rs).
+- Gate: `cargo test --locked -p pgpool --all-features`
 
-- Root WI: #1282
-- Surfaces: CLI: `pgpool` - single bin; `runtime-plan` and `spec` verbs today,
-  serve-by-default data/admin plane entrypoint planned.
-- Gate — behavior: `cargo test -p pgpool --test cli_contract` - compiled-binary
-  help/verb contract
-- Source: `tests/cli_contract.rs`, `src/bin/pgpool.rs`
-
-| Work Root | Kind | WI | Gate / Evidence |
-|---|---|---:|---|
-| offline-plan-and-spec-verbs | change | - | tests/cli_contract.rs |
-| serve-by-default-entrypoint | epic | 1288 | tests/cli_contract.rs (`help_and_llm_workflow_topic_mention_serve`); src/bin/pgpool.rs |
+Run `pgpool serve` to start the current data and admin planes. The parser requires a command. `pgpool k8s` supplies render and operator commands. The old serve-by-default outcome remains open.
 
 ### CLI Standard Surface
 
-Ship the mandatory shared `cli-std` surface (llm/upgrade/issue) every ecosystem
-CLI owes, backed by build-stamp provenance, without blurring it into pgpool's
-domain verbs.
+- ID: `cli-standard-surface`
+- Promise: Ship the shared `llm`, `upgrade`, and `issue` surface. Include the build version, Git revision, build time, and target.
+- Sources:
+  - `external:pgpool` wires cli-std commands in [app/commands](src/app/commands.rs), uses build-stamp through [build.rs](build.rs), and checks [CLI help](tests/it/cli_contract.rs).
+- Gate: `cargo test --locked -p pgpool --all-features`
 
-- Root WI: none; this capability predates the tracker.
-- Surfaces: CLI: `pgpool llm` - offline agent self-doc topics (outline,
-  workflow, api, boundaries).; CLI: `pgpool upgrade` - shared self-update and
-  `--check` surface through `cli-std`.; CLI:
-  `pgpool issue search|view|create|comment` - shared tracker surface scoped to
-  `project:pgpool`.
-- Gate — behavior: `cargo test -p pgpool --test cli_contract` -
-  llm/upgrade/issue appear in the compiled binary help contract
-- Source: `src/bin/pgpool.rs`, `tests/cli_contract.rs`,
-  `core/cli-std/src`
-- Evidence: tests/cli_contract.rs
+`pgpool llm` supports outline, workflow, api, and boundaries topics. `pgpool issue search|view|create|comment` uses the pgpool project scope. Online commands need the matching `self-update` or `issue` feature and external service access. Local help checks do not prove a published release or a live tracker action.
 
 ### Chainable Output Conformance
 
-Keep pgpool's CLI outputs chainable per the CLI convention: raw artifact
-streams (spec renders) stay unwrapped bytes, while operational verbs carry
-explicit `next:`/terminal markers.
+- ID: `chainable-output-conformance`
+- Promise: Keep spec and manifest output as raw artifact bytes. Give operational output the required next or terminal marker.
+- Sources:
+  - `external:pgpool` writes artifacts and the runtime-plan marker in [app/commands](src/app/commands.rs), with checks in [CLI tests](tests/it/cli_contract.rs).
+- Gate: `cargo test --locked -p pgpool --all-features`
 
-- Root WI: none; this capability predates the tracker.
-- Surfaces: CLI: `pgpool spec --format openapi|openapi-yaml|json-schema|routes`
-  - raw artifact streams that intentionally stay unwrapped bytes.; CLI:
-  `pgpool runtime-plan` - operational output carrying a runnable `next:` step.
-- Gate — behavior: `cargo test -p pgpool --test cli_contract` - runtime-plan
-  emits `next: pgpool spec --format routes`
-- Gate: spec stdout stays raw parseable bytes
-- Source: `tests/cli_contract.rs`, `src/bin/pgpool.rs`
-
-| Work Root | Kind | WI | Gate / Evidence |
-|---|---|---:|---|
-| next-marker-on-runtime-plan | change | - | tests/cli_contract.rs |
-| raw-spec-streams-stay-unwrapped | change | - | tests/cli_contract.rs |
+`runtime-plan` prints its plan followed by `next: pgpool spec --format routes`. Spec formats are `openapi`, `openapi-yaml`, `json-schema`, and `routes`. The next marker is separate from the plan JSON. Raw spec output has no operational wrapper.
 
 ### Competitor Feature Parity
 
-Cover the baseline connection-pooler functions pgpool needs to replace
-PgBouncer, Odyssey, and pgcat for Axiom workloads: transaction and session
-pooling, bounded admission, drain, and pool observability.
+- ID: `competitor-feature-parity`
+- Promise: Cover transaction and session pooling, bounded admission, drain, and pool measurements for Axiom workloads that use PgBouncer, Odyssey, or pgcat.
+- Sources:
+  - `external:pgpool` holds the current [pool mode cases](tests/it/pool_modes.rs) and [admin cases](tests/it/admin_plane.rs).
+- Gate: `cargo test --locked -p pgpool --all-features`
 
-- Root WI: #1285
-- Surfaces: TCP: PostgreSQL wire frontend - transaction/session pooling
-  workflows PgBouncer-class poolers cover.; HTTP: admin pool/stats/drain routes
-  - operational parity with pooler admin consoles.
-- Gate — behavior: pending pooler parity conformance gates - transaction
-  pooling, session pooling, drain, and stats parity vs PgBouncer/Odyssey/pgcat
-- Source: `pending: parity conformance matrix vs PgBouncer/Odyssey/pgcat`
-- Evidence: pending: parity conformance gates
+The local gate checks the existing pooler slice. It covers reuse, reset, admission limits, and admin behavior. The full external parity matrix remains open. The local gate does not prove complete replacement of a named competitor.
 
 ### Competitor Performance
 
-Tie pgpool's performance claims to repeatable pooled-connection throughput and
-latency tests under a vat-isolated meter gate, with the external PgBouncer /
-Odyssey / pgcat comparison as advisory dogfood until promoted.
+- ID: `competitor-performance`
+- Promise: Measure pooled connection throughput and latency with a repeatable vat-isolated meter gate. Keep external pooler comparisons advisory until the enforced gate exists.
+- Sources:
+  - `external:pgpool` holds the fixed comparison [runner](benchmarks/pgbouncer-transaction-pooling/run.sh), its [contract](benchmarks/pgbouncer-transaction-pooling/README.md), and [profile and verdict cases](tests/it/pgbouncer_benchmark.rs).
+- Gate: `cargo test --locked -p pgpool --all-features`
 
-- Root WI: #1285
-- Surfaces: Harness:
-  `benchmarks/pgbouncer-transaction-pooling/run.sh` - fixed
-  counterbalanced PgBouncer transaction-pooling comparison.; Meter/Vat: meter
-  diagnostics are executable while `vat.toml#meter-perf` remains
-  pending for an isolated ratchet.
-- Gate — efficiency: fixed 64-client, 16-backend, simple-protocol release ABBA
-  comparison with complete-client/error validation
-- Gate: pending vat promotion to an enforced ratchet
-- Source:
-  `tests/pgbouncer_benchmark.rs - hermetic profile/verdict contract`,
-  `benchmarks/pgbouncer-transaction-pooling/run.sh - six eligible release wins recorded on #1753, including the default transaction engine`,
-  `pending: vat.toml meter-perf promotion to an enforced isolated ratchet`
-
-| Work Root | Kind | WI | Gate / Evidence |
-|---|---|---:|---|
-| vat-meter-throughput-gate | epic | 1285 | pending: vat meter-perf runner |
-| external-pooler-comparison | change | 1753 | fixed local ABBA runner; six eligible pgpool wins vs PgBouncer with both orders unanimous |
+The local harness uses 64 clients, 16 backends, and the simple query protocol. Its ABBA order runs each competitor first and second. A valid result requires all clients to finish and error checks to pass. The local test gate checks harness rules. It does not run the performance comparison. The enforced isolated meter ratchet remains open. A ratchet is a gate that rejects a regression.
 
 ### EC Gates Configured
 
-Keep pgpool's service-trait EC baseline explicit and runnable: aw.toml owns the
-EC inventory, vat owns the meter/guard runners, and external-contracts/ carries
-the evidence contracts each gate closes against.
+- ID: `ec-gates-configured`
+- Promise: Keep the service evidence contract inventory explicit. Supply vat meter and guard runners with evidence under `external-contracts/`.
+- Sources:
+  - `external:pgpool` declares required service traits in [aw.toml](aw.toml) and checks the current local [benchmark contract](tests/it/pgbouncer_benchmark.rs).
+- Gate: `cargo test --locked -p pgpool --all-features`
 
-- Root WI: #1285
-- Surfaces: Config: `aw.toml` - AW EC inventory and generated
-  dispatch commands (pending).; Config: pending `vat.toml` -
-  vat-managed meter/guard runners.
-- Gate — behavior: pending a phase-1 project at `e2e/` - no
-  black-box case exists yet for the pooler capability set
-- Source: `pending: aw.toml EC inventory`,
-  `pending: vat meter/guard runners and external-contracts evidence`
-- Evidence: pending: aw ec gen --verify
+EC means evidence contract. The local gate checks only existing test and harness contracts. The full inventory, vat runners, and external evidence gates remain open. This capability is a retained target.
 
 ### HTTP/2 API List
 
-Publish pgpool's admin HTTP surface as a compact route inventory — standard
-operational endpoints plus `/pools`, `/pools/{pool}/stats`, and `/drain` — with
-the offline `pgpool spec` twin matching the served contract once the admin
-plane runs.
+- ID: `http2-api-list`
+- Promise: Publish standard admin routes plus `/pools`, `/pools/{pool}/stats`, and `/drain`. Keep the served OpenAPI contract equal to the offline spec.
+- Sources:
+  - `external:pgpool` defines the [offline spec](src/interfaces/spec.rs), registers [admin routes](src/interfaces/admin/router.rs), and compares both in [admin cases](tests/it/admin_plane.rs).
+- Gate: `cargo test --locked -p pgpool --all-features`
 
-- Root WI: #1282
-- Surfaces: CLI: `pgpool spec --format routes|openapi|openapi-yaml|json-schema`
-  - offline admin API inventory and OpenAPI twin.; HTTP: served `/openapi.json`
-  and admin routes on the running admin plane, matching the offline twin
-  byte-for-byte.
-- Gate — behavior: `cargo test -p pgpool` - offline route inventory names the
-  standard and pool admin endpoints
-- Gate: served-vs-offline conformance proven by `tests/admin_plane.rs`
-- Gate: tests/admin_plane.rs
-  (`served_contract_matches_offline_spec`, AC3)
-- Source: `src/spec.rs`, `tests/cli_contract.rs`
-
-| Work Root | Kind | WI | Gate / Evidence |
-|---|---|---:|---|
-| offline-route-and-openapi-inventory | change | - | src/spec.rs; tests/cli_contract.rs |
-| served-contract-matches-offline-spec | epic | 1290 | tests/admin_plane.rs (`served_contract_matches_offline_spec`); tech-design/logic/served-admin-plane-with-drain-aware-readiness.md |
+Use `pgpool spec --format routes` for the route list. Use `pgpool spec --format openapi` for the offline twin of `/openapi.json`. The served checks are local behavior evidence. They do not prove deployment or release acceptance.
 
 ### Kubernetes-Native Deployment
 
-Ship pgpool as a Kubernetes-native pooler: CRD/operator/instance render verbs,
-image fixtures rendered from the binary, and pod lifecycle behavior (readiness
-flip plus graceful drain) proven in a kind smoke path.
+- ID: `kubernetes-native-deployment`
+- Promise: Ship CRD, operator, and instance render commands. Use stateless Deployment, ClusterIP, and PDB assets. Admit endpoint quotas before apply and drain before release.
+- Sources:
+  - `external:pgpool` renders [operator assets](src/interfaces/operator/render.rs) and [instance profiles](src/application/k8s/instance.rs), applies [quota and drain decisions](src/application/k8s/control.rs), and checks [operator behavior](tests/it/operator.rs).
+- Gate: `cargo test --locked -p pgpool --all-features`
 
-- Root WI: #1284
-- Surfaces: CLI: `pgpool k8s crd render`, `pgpool k8s operator render|run`, and
-  `pgpool k8s instance render` - layered deployment artifact verbs per the
-  service CLI convention.; K8s: namespaced Pgpool CRD, leader-elected operator,
-  live endpoint discovery plus pre-apply quota admission, instance profiles,
-  and shared stateless Deployment/ClusterIP/PDB composition.
-- Gate — behavior: `cargo test -p pgpool --test operator --test cli_contract` -
-  CRD/operator/instance artifacts and shared Deployment children render
-  deterministically from the binary and typed CR
-- Source:
-  `tests/operator.rs - CRD structural schema, owned stateless render, readiness, budget-status, and operator asset gates`,
-  `tests/cli_contract.rs - layered k8s CLI render contract`,
-  `src/k8s/control.rs - deterministic quota admission and drain-before-release reconciliation model`,
-  `real kind API-server smoke - generated CRD, Pgpool CR, RBAC, and operator Deployment admitted successfully`
-
-| Work Root | Kind | WI | Gate / Evidence |
-|---|---|---:|---|
-| crd-operator-instance-render | epic | 1284 | tests/operator.rs; tests/cli_contract.rs; tech-design/semantic/pgpool-crd-operator-control-plane.md |
-| kind-drain-readiness-smoke | epic | 1284 | pending: kind smoke script |
-| stateless-deployment-instance | change | 1561 | src/k8s/instance.rs; negative stateful-boundary tests in the same source unit |
-| global-endpoint-quota-allocation | change | 1571 | src/k8s/budget.rs; tech-design/semantic/pgpool-global-endpoint-quota-allocation.md |
-| drain-safe-control-plane-status | change | 1573 | src/k8s/control.rs; tech-design/semantic/pgpool-drain-safe-control-plane-status.md |
-| crd-operator-control-plane | change | 1575 | src/operator; tests/operator.rs; tech-design/semantic/pgpool-crd-operator-control-plane.md |
+The namespaced Pgpool CRD uses the existing leader-elected operator and service-k8s mechanics. Instance profiles cover dev, staging, prod, and template. PostgreSQL owns durable data. Images, repeatable kind drain checks, and deployment acceptance remain open. Historical kind admission notes remain in STATUS.
 
 ### Long-Running Stability
 
-Run as a long-lived pooler without leaking backend connections or file
-descriptors, dropping in-flight transactions on drain, or corrupting pool state
-across backend restarts and rolling deploys.
+- ID: `long-running-stability`
+- Promise: Run without backend connection or file descriptor leaks. Preserve in-flight transactions during drain. Preserve pool state safety through backend restarts and rolling deploys.
+- Sources:
+  - `external:pgpool` checks bounded reuse in [pool mode cases](tests/it/pool_modes.rs), dropped lease capacity in [pool cases](tests/it/pool.rs), and drain in [admin cases](tests/it/admin_plane.rs).
+- Gate: `cargo test --locked -p pgpool --all-features`
 
-- Root WI: #1282
-- Surfaces: CLI: pending `pgpool` serve process - durable pooler with
-  drain-aware shutdown.; TCP/HTTP: frontend admission and admin plane surviving
-  backend restarts and rolling deploys.
-- Gate — stability: pending long-run and drain conformance gates - backend
-  reuse without connection/fd leaks, drain without dropped in-flight
-  transactions, restart safety
-- Gate: tests/pool_modes.rs
-  (`churn_100_cycles_holds_backend_count_stable_no_leak`)
-- Gate: tests/pool.rs
-  (`dropped_lease_without_explicit_release_does_not_leak_capacity_slot`) —
-  bounded-cycle proof, not a true long-run soak
-- Source: `pending: drain and backend-restart conformance tests`
-
-| Work Root | Kind | WI | Gate / Evidence |
-|---|---|---:|---|
-| pool-leak-and-reuse-longrun | epic | 1289 | bounded-cycle proof, not a true long-run soak: tests/pool_modes.rs (`churn_100_cycles_holds_backend_count_stable_no_leak`); tests/pool.rs (`dropped_lease_without_explicit_release_does_not_leak_capacity_slot`) |
-| drain-and-backend-restart-safety | epic | 1289 | pending: drain conformance tests |
+The churn case uses 100 cycles. The dropped-lease case checks capacity return without an explicit release. These are bounded local cases. A true long-run soak, restart safety, and rolling deployment acceptance remain open.
 
 ### Security Hardening
 
-Keep pgpool safe as a network-exposed credential-carrying proxy: auth
-passthrough without credential persistence, explicit TLS posture on both
-frontend and backend links, malformed wire-frame rejection, and a gated admin
-plane before production readiness.
+- ID: `security-hardening`
+- Promise: Pass authentication to PostgreSQL without storing credentials. Reject malformed wire frames. Define TLS on frontend and backend links. Gate the admin plane before production acceptance.
+- Sources:
+  - `external:pgpool` handles auth in the [proxy edge](src/interfaces/proxy.rs), rejects malformed frames in [wire cases](tests/it/wire_codec.rs), and checks managed TLS in [discovery cases](tests/it/connection_discovery.rs).
+- Gate: `cargo test --locked -p pgpool --all-features`
 
-- Root WI: #1286
-- Surfaces: TCP: PostgreSQL frontend auth passthrough - client credentials
-  verified against the backend, never stored.; HTTP: admin plane exposure
-  posture - probes stay tokenless, mutating admin verbs gated.; Env: pending
-  TLS material configuration for frontend and backend links.
-- Gate — security: pending guard scan and negative gates - auth passthrough,
-  TLS posture, malformed-frame rejection, admin exposure
-- Source: `pending: vat guard-security runner`,
-  `pending: auth passthrough and malformed-frame negative tests`
-
-| Work Root | Kind | WI | Gate / Evidence |
-|---|---|---:|---|
-| auth-passthrough-and-tls-posture | epic | 1286 | pending: negative gates |
-| guard-static-runtime-evidence | epic | 1286 | pending: vat guard-security runner |
+The local slice includes auth passthrough, wire validation, and configured managed discovery TLS. Standard probes remain tokenless. Full relay TLS, mutating admin authorization, and guard-security evidence remain open. Discovery TLS does not prove those boundaries.
 
 ### Standard Operational Endpoints
 
-Expose the standard one-port operational surface the service trait requires —
-probes, metrics scrape, live spec, and Swagger UI stay always-on on the admin
-port, with readiness flipping on drain and `pgpool spec` as the offline twin.
+- ID: `standard-operational-endpoints`
+- Promise: Serve `/healthz`, `/readyz`, `/metrics`, `/openapi.json`, and `/docs` on one admin port. Flip readiness during drain. Keep `pgpool spec` as the offline twin.
+- Sources:
+  - `external:pgpool` registers [standard routes](src/interfaces/admin/router.rs), shares drain in [admin wiring](src/interfaces/admin/wiring.rs), and checks probes and gauges in [admin cases](tests/it/admin_plane.rs).
+- Gate: `cargo test --locked -p pgpool --all-features`
 
-- Root WI: #1282
-- Surfaces: HTTP: `/healthz`, `/readyz`, `/metrics`, `/openapi.json`, `/docs` -
-  one-port operational surface, served on `RuntimePlan.admin_bind` via
-  `server_http::serve_h2c_with_options`.; CLI: `pgpool spec` - offline OpenAPI
-  evidence for the same contract when no server is running.
-- Gate — behavior: `cargo test -p pgpool` - offline inventory carries the five
-  standard endpoints
-- Gate: served conformance proven by `tests/admin_plane.rs`
-- Gate: tests/admin_plane.rs (`all_routes_respond_on_h2c_and_http1`
-  AC1, `drain_flips_readyz_and_process_exits_cleanly` AC2,
-  `metrics_exposes_prometheus_pool_gauges` AC4)
-- Source: `src/spec.rs`
+The default admin bind is `0.0.0.0:9080` through `RuntimePlan.admin_bind`. The shared server-http listener supports h2c and HTTP/1.1. Metrics use metrics-prometheus. Local cases do not certify a production cluster.
 
-| Work Root | Kind | WI | Gate / Evidence |
-|---|---|---:|---|
-| offline-standard-endpoint-inventory | change | - | src/spec.rs |
-| served-probes-and-drain-flip | epic | 1290 | tests/admin_plane.rs (`all_routes_respond_on_h2c_and_http1`, `drain_flips_readyz_and_process_exits_cleanly`, `metrics_exposes_prometheus_pool_gauges`); tech-design/logic/served-admin-plane-with-drain-aware-readiness.md |
+## Supporting documents
+
+- [STATUS.md](STATUS.md) states current support and preserves unverified history.
+- [ROADMAP.md](ROADMAP.md) keeps open outcomes and non-goals.
+- [CONTRIBUTING.md](CONTRIBUTING.md) states change and check rules.
+- [Document index](docs/README.md) maps the architecture pages.
+- [Architecture](docs/architecture.md) maps code, public paths, and debt.
+- [Domain page](docs/domain/pgpool.md) explains pool ownership and boundaries.
+- [Glossary](docs/glossary.md) defines the terms used here.
+- [Layout decision](docs/adr/0001-standard-layout-and-ddd.md) records the choice.
+- [Architecture conformance](docs/operations/architecture-conformance.md) gives the required checks.

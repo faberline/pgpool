@@ -1,3 +1,4 @@
+//! isolation: changes PGPOOL_TRANSACTION_ENGINE
 // HANDWRITE-BEGIN gap="missing-generator:unit-test:70a5ad2b" tracker="#1599" reason="Verify exact match, synthetic cancellation key, challenge exclusion, and concurrent capped trust startup."
 use std::sync::atomic::{AtomicUsize, Ordering};
 use std::sync::Arc;

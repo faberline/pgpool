@@ -1,0 +1,11 @@
+mod admin_plane;
+mod cli_contract;
+mod connection_discovery;
+mod operator;
+mod pgbouncer_benchmark;
+mod pool;
+mod pool_modes;
+mod proxy;
+mod reconcile_planning;
+mod session_proxy;
+mod wire_codec;
